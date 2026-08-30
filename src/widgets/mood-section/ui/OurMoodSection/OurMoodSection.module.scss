@@ -1,0 +1,27 @@
+@use '../../../../shared/styles/variables.scss' as *;
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.categoriesWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.categoryBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.categoryLabel {
+  font-size: 13px;
+  font-weight: 700;
+  color: $text-secondary;
+  letter-spacing: 0.2px;
+}

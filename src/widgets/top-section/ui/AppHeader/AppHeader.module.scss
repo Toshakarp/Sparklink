@@ -1,0 +1,49 @@
+@use '../../../../shared/styles/variables.scss' as *;
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px 10px;
+  background-color: transparent;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.infoWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.pairTitle {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+  color: $text-primary;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.syncStatus {
+  font-size: 11px;
+  font-weight: 500;
+  color: $text-secondary;
+  margin-top: 3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: $color-green;
+    box-shadow: 0 0 8px rgba(52, 199, 89, 0.8);
+  }
+}

@@ -1,0 +1,142 @@
+@use '../../../../shared/styles/variables.scss' as *;
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px;
+}
+
+.titleGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 700;
+  color: $text-primary;
+}
+
+.countBadge {
+  font-size: 12px;
+  font-weight: 600;
+  color: $text-secondary;
+  background: $border-medium;
+  padding: 2px 8px;
+  border-radius: $radius-oval;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filterBtn {
+  position: relative;
+}
+
+.filterActive {
+  background: $confirm-bg !important;
+  border-color: $color-green !important;
+  color: $color-green !important;
+}
+
+.filterIconWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filterDot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: $color-green;
+}
+
+.activeFiltersBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: $confirm-bg;
+  border: 1px solid $confirm-border;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.filterSummaryText {
+  color: $color-green;
+  font-weight: 600;
+}
+
+.clearFiltersBtn {
+  background: none;
+  border: none;
+  color: $text-secondary;
+  font-size: 12px;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 2px 4px;
+
+  &:hover {
+    color: $text-primary;
+  }
+}
+
+.content {
+  width: 100%;
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.stateCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px 20px;
+  background: rgba($color-white, 0.03);
+  border: 1px dashed $border-medium;
+  border-radius: 20px;
+  gap: 10px;
+}
+
+.emptyIcon {
+  color: rgba($color-white, 0.35);
+  margin-bottom: 2px;
+}
+
+.stateTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: $text-primary;
+}
+
+.stateDesc {
+  font-size: 13px;
+  color: $text-secondary;
+  max-width: 280px;
+  line-height: 1.4;
+  margin-bottom: 4px;
+}

@@ -1,0 +1,111 @@
+@use '../../../../shared/styles/variables.scss' as *;
+
+.card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 20px;
+  overflow: hidden;
+  background-color: $color-bg-card-hover;
+  border: 1px solid $border-subtle;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.2s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  &:active {
+    transform: scale(0.97);
+    border-color: $confirm-border;
+    box-shadow: $glow-green;
+  }
+}
+
+.avatarBadge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 10;
+  filter: drop-shadow(0 2px 4px rgba($color-black, 0.5));
+}
+
+.photoWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.overlayGradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba($color-black, 0.1) 0%, rgba($color-black, 0.5) 100%);
+  pointer-events: none;
+}
+
+.timeBadge {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background-color: rgba($color-black, 0.65);
+  backdrop-filter: blur(8px);
+  padding: 3px 8px;
+  border-radius: $radius-oval;
+  border: 1px solid $border-medium;
+  color: $text-primary;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.placeholder {
+  width: 100%;
+  height: 100%;
+  padding: 16px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.placeholderIconBox {
+  width: 40px;
+  height: 40px;
+  border-radius: $radius-oval;
+  background-color: $border-subtle;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $text-secondary;
+  border: 1px dashed $border-medium;
+}
+
+.placeholderText {
+  color: $text-muted;
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+.photoFallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: $text-muted;
+}
+
+.fallbackText {
+  font-size: 11px;
+}

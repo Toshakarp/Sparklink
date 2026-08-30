@@ -1,0 +1,90 @@
+@use '../../../../shared/styles/variables.scss' as *;
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background-color: $color-bg-card-hover;
+  border-radius: $radius-card;
+  cursor: pointer;
+  border: 1px solid $border-subtle;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+
+  &:hover {
+    background-color: $color-bg-card-elevated;
+  }
+
+  &:active {
+    transform: scale(0.99);
+  }
+}
+
+.destructive {
+  .title {
+    color: $warning-color-text;
+  }
+  .iconBox {
+    color: $warning-color-text;
+    background-color: $warning-bg;
+  }
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.iconBox {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background-color: $border-medium;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $text-primary;
+  flex-shrink: 0;
+}
+
+.textGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.title {
+  color: $text-primary;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.subtitle {
+  color: $text-secondary;
+  font-size: 12px;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.countBadge {
+  background-color: $border-medium;
+  padding: 2px 8px;
+  border-radius: $radius-oval;
+}
+
+.countText {
+  color: $text-secondary;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.chevron {
+  color: $text-muted;
+}

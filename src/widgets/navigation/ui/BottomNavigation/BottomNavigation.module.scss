@@ -1,0 +1,70 @@
+@use '../../../../shared/styles/variables.scss' as *;
+
+.tabBar {
+  flex-shrink: 0;
+  width: 100%;
+  height: 64px;
+  background-color: $color-bg-card;
+  border-top: 1px solid $border-subtle;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 12px;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  z-index: 50;
+}
+
+.tabButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: $text-muted;
+  transition: all 0.2s ease;
+  flex: 1;
+  max-width: 90px;
+  height: 54px;
+  border-radius: 16px;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid transparent;
+
+  &:hover {
+    color: $text-secondary;
+  }
+
+  &:active {
+    transform: scale(0.92);
+  }
+
+  &.active {
+    color: $color-pink;
+    background-color: rgba($color-pink, 0.1);
+    border-color: rgba($color-pink, 0.2);
+    box-shadow: 0 0 16px rgba($color-pink, 0.1);
+    
+    .iconWrapper {
+      transform: translateY(-1px);
+    }
+
+    .label {
+      color: $color-pink;
+      font-weight: 700;
+    }
+  }
+}
+
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  transition: all 0.2s ease;
+}
