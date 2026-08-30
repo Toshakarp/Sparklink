@@ -1,0 +1,149 @@
+$max-app-width: 480px;
+$app-padding-x: 16px;
+
+// Spacing & Layout 
+$spacing-xxs: 4px;
+$spacing-xs: 6px;
+$spacing-sm: 8px;
+$spacing-md: 12px;
+$spacing-lg: 16px;
+$spacing-xl: 20px;
+$spacing-xxl: 24px;
+$spacing-3xl: 32px;
+
+// Gap 
+$gap-xs: 6px;
+$gap-sm: 8px;
+$gap-md: 12px;
+$gap-lg: 16px;
+$gap-xl: 20px;
+
+// Border Radius 
+$radius-xs: 6px;
+$radius-sm: 8px;
+$radius-input: 12px;
+$radius-md: 12px;
+$radius-card: 18px;
+$radius-lg: 16px;
+$radius-xl: 20px;
+$radius-square: 24px;
+$radius-bubble: 32px;
+$radius-oval: 9999px;
+$radius-pill: 9999px;
+
+// Z-Index  
+$z-base: 1;
+$z-dropdown: 100;
+$z-sticky: 200;
+$z-tabbar: 500;
+$z-modal-backdrop: 900;
+$z-modal-content: 1000;
+$z-toast: 1100;
+
+// Color Palette
+$color-white: #ffffff;
+$color-black: #000000;
+$color-pink: #ff2d55;
+$color-red: #ff3b30;
+$color-green: #34c759;
+$color-orange: #ff9500;
+$color-yellow: #ffd60a;
+$color-blue: #0a84ff;
+$color-purple: #af52de;
+
+// Backgrounds & Surfaces
+$color-bg-canvas: #050505;
+$color-dark-bg: #050505;
+$color-bg-card: #121212;
+$color-card-bg: #121212;
+$color-bg-card-hover: #1c1c1e;
+$color-bg-card-elevated: #242426;
+$color-card-elevated: #242426;
+
+// Text Colors
+$text-primary: $color-white;
+$text-secondary: #8e8e93;
+$text-muted: #545458;
+
+// Borders
+$border-subtle: rgba($color-white, 0.06);
+$border-medium: rgba($color-white, 0.12);
+$border-bright: rgba($color-white, 0.25);
+$border-color: $border-subtle;
+$overlay-bg: rgba($color-bg-canvas, 0.82);
+
+$bg-primary: $color-bg-canvas;
+$bg-card: $color-bg-card;
+$bg-card-hover: $color-bg-card-hover;
+
+// Mood Colors
+$mood-color-1: $color-red;
+$mood-color-2: $color-orange;
+$mood-color-3: $color-yellow; 
+$mood-color-4: $color-green; 
+$mood-color-5: $color-pink;
+
+// Theme Colors
+$theme-color-1: $color-red;
+$theme-color-2: $color-orange;
+$theme-color-3: $color-yellow;
+$theme-color-4: $color-green;
+$theme-color-6: $color-blue;
+$theme-color-7: $color-purple;
+$theme-color-8: $color-pink;
+
+// Interactive Status & Glow  
+$attention-color-text: $color-white;
+$attention-bg: rgba($color-pink, 0.16);
+$attention-border: rgba($color-pink, 0.5);
+$attention-bg-hover: rgba($color-pink, 0.28);
+$attention-border-hover: rgba($color-pink, 0.8);
+
+$confirm-color-text: $color-green;
+$confirm-bg: rgba($color-green, 0.16);
+$confirm-border: rgba($color-green, 0.5);
+$confirm-bg-hover: rgba($color-green, 0.26);
+$confirm-border-hover: rgba($color-green, 0.8);
+
+$warning-color-text: #ff453a;
+$warning-bg: rgba($warning-color-text, 0.18);
+$warning-border: rgba($warning-color-text, 0.55);
+$warning-bg-hover: rgba($warning-color-text, 0.3);
+$warning-border-hover: rgba($warning-color-text, 0.8);
+
+$glow-neutral: 0 0 18px rgba($color-white, 0.2);
+$glow-pink: 0 0 20px rgba($color-pink, 0.45);
+$glow-green: 0 0 18px rgba($color-green, 0.4);
+$glow-orange: 0 0 18px rgba($color-orange, 0.4);
+$glow-yellow: 0 0 18px rgba($color-yellow, 0.4);
+$glow-blue: 0 0 20px rgba($color-blue, 0.45);
+$glow-warning: 0 0 20px rgba($warning-color-text, 0.6);
+$glow-partner: 0 0 20px var(--partner-color, rgba($color-white, 0.2));
+
+$glow-mood-1: 0 0 20px rgba($color-red, 0.5);
+$glow-mood-2: 0 0 20px rgba($color-orange, 0.5);
+$glow-mood-3: 0 0 20px rgba($color-yellow, 0.5);
+$glow-mood-4: 0 0 20px rgba($color-green, 0.5);
+$glow-mood-5: 0 0 22px rgba($color-pink, 0.6);
+
+$glow-duration: 5s;
+
+@keyframes glowPinkFade {
+  0% { box-shadow: $glow-pink; border-color: rgba($color-pink, 0.85); }
+  100% { box-shadow: 0 0 0 transparent; border-color: rgba($color-white, 0.08); }
+}
+
+@keyframes glowGreenFade {
+  0% { box-shadow: $glow-green; border-color: rgba($color-green, 0.85); }
+  100% { box-shadow: 0 0 0 transparent; border-color: rgba($color-white, 0.08); }
+}
+
+@keyframes glowWarningFade {
+  0% { box-shadow: $glow-warning; border-color: $warning-color-text; }
+  100% { box-shadow: 0 0 0 transparent; border-color: $warning-border; }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.03); opacity: 1; }
+}
