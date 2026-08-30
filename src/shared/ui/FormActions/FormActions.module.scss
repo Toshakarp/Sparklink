@@ -1,0 +1,21 @@
+@use '../../styles/variables.scss' as *;
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+  width: 100%;
+}
+
+.submitBtn {
+  font-weight: 700;
+}
+
+.cancelBtn {
+  font-weight: 600;
+}
+
+.deleteBtn {
+  font-weight: 600;
+}

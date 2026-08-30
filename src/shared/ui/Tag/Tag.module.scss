@@ -1,0 +1,61 @@
+@use '../../styles/variables.scss' as *;
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: $gap-xs;
+  padding: $spacing-sm $spacing-md;
+  background-color: $color-bg-card;
+  border: 1px solid $border-subtle;
+  border-radius: $radius-oval;
+  color: $text-secondary;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+  position: relative;
+  user-select: none;
+  white-space: nowrap;
+
+  &:hover:not(:disabled) {
+    background-color: $color-bg-card-hover;
+    border-color: $border-medium;
+    color: $text-primary;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.95);
+  }
+}
+
+.tagActive {
+  background-color: rgba($color-white, 0.05);
+  border-color: $color-white;
+  color: $color-white;
+  font-weight: 600;
+}
+
+.checkIcon {
+  margin-left: 2px;
+  stroke-width: 3px;
+}
+
+.emoji {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.title {
+  line-height: 1.2;
+}
+
+.tapPulse {
+  animation: tapBounce 0.3s ease;
+}
+
+@keyframes tapBounce {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.92); }
+  100% { transform: scale(1); }
+}

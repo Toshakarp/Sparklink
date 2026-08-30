@@ -1,0 +1,100 @@
+@use '../../styles/variables.scss' as *;
+
+.iconButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  background-color: $color-bg-card;
+  color: $text-primary;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+  user-select: none;
+
+  &:hover:not(:disabled) {
+    background-color: $color-bg-card-hover;
+    border-color: rgba($color-white, 0.15);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.94);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+// Sizes
+.sm {
+  width: 28px;
+  height: 28px;
+  font-size: 14px;
+}
+
+.md {
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+}
+
+.lg {
+  width: 44px;
+  height: 44px;
+  font-size: 22px;
+}
+
+// Shapes
+.round {
+  border-radius: $radius-oval;
+}
+
+.square {
+  border-radius: $radius-md;
+}
+
+.pill {
+  border-radius: $radius-oval;
+  padding: 0 12px;
+  width: auto;
+}
+
+// Variants
+.ghost {
+  background-color: transparent;
+  border-color: transparent;
+  color: $text-secondary;
+
+  &:hover:not(:disabled) {
+    background-color: rgba($color-white, 0.08);
+    color: $text-primary;
+  }
+}
+
+.danger {
+  background-color: rgba($color-red, 0.15);
+  border-color: rgba($color-red, 0.3);
+  color: $color-red;
+
+  &:hover:not(:disabled) {
+    background-color: rgba($color-red, 0.25);
+  }
+}
+
+.accent {
+  background-color: rgba($color-pink, 0.15);
+  border-color: rgba($color-pink, 0.3);
+  color: $color-pink;
+
+  &:hover:not(:disabled) {
+    background-color: rgba($color-pink, 0.25);
+  }
+}
+
+.active {
+  background-color: rgba($color-pink, 0.2);
+  border-color: $color-pink;
+  color: $color-pink;
+}
