@@ -1,0 +1,30 @@
+@use '../../../../shared/styles/variables.scss' as *;
+
+.moodTag {
+  &.mySelected {
+    border-color: var(--my-color, var(--accent-color, $color-pink));
+    color: $color-white;
+    font-weight: 600;
+  }
+
+  &.partnerSelected {
+    border-color: var(--partner-color, $color-blue);
+    color: $color-white;
+    font-weight: 600;
+  }
+
+  &.bothSelected {
+    border-color: $color-white;
+    color: $color-white;
+    font-weight: 600;
+    box-shadow: 0 0 10px rgba($color-white, 0.2);
+  }
+}
+
+.partnerDot {
+  width: 6px;
+  height: 6px;
+  border-radius: $radius-oval;
+  background-color: var(--partner-color, $color-blue);
+  margin-left: 2px;
+}

@@ -1,0 +1,26 @@
+@use '../../../../shared/styles/variables.scss' as *;
+
+.avatarGroup {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.avatarItem {
+  transition: transform 0.2s ease;
+
+  &:not(:first-child) {
+    margin-left: -12px;
+  }
+}
+
+.syncBadge {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: $color-green;
+  border: 2px solid $color-bg-canvas;
+}

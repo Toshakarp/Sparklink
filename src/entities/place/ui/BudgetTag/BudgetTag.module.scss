@@ -1,0 +1,42 @@
+@use '../../../../shared/styles/variables.scss' as *;
+
+.budgetTag {
+  &.isActive {
+    font-weight: 600;
+    
+    // Force the checkmark to be white as requested
+    svg {
+      color: $color-white !important;
+    }
+  }
+  
+  &.level1 {
+    color: $color-green !important;
+    border-color: $color-green !important;
+    &.isActive { background-color: rgba($color-green, 0.15) !important; }
+  }
+  
+  &.level2 {
+    color: $color-yellow !important;
+    border-color: $color-yellow !important;
+    &.isActive { background-color: rgba($color-yellow, 0.15) !important; }
+  }
+  
+  &.level3 {
+    color: $color-orange !important;
+    border-color: $color-orange !important;
+    &.isActive { background-color: rgba($color-orange, 0.15) !important; }
+  }
+  
+  &.level4 {
+    color: $color-pink !important;
+    border-color: $color-pink !important;
+    &.isActive { background-color: rgba($color-pink, 0.15) !important; }
+  }
+
+  &.level5 {
+    color: $color-red !important;
+    border-color: $color-red !important;
+    &.isActive { background-color: rgba($color-red, 0.15) !important; }
+  }
+}
