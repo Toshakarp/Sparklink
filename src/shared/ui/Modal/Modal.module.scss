@@ -1,0 +1,96 @@
+@use '../../styles/variables.scss' as *;
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background-color: $overlay-bg;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-modal-backdrop;
+  padding: 16px;
+}
+
+.content {
+  background-color: $color-bg-card;
+  border: 1px solid $border-medium;
+  border-radius: $radius-square;
+  width: 100%;
+  max-width: $max-app-width;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba($color-black, 0.8), 0 0 20px rgba($color-white, 0.05);
+  animation: modalAppear 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: $z-modal-content;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid $border-subtle;
+  min-height: 56px;
+}
+
+.title {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  color: $text-primary;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.closeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-oval;
+  background: $color-bg-card-hover;
+  border: 1px solid $border-subtle;
+  color: $text-secondary;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+  margin-left: auto;
+
+  &:hover {
+    color: $text-primary;
+    background-color: $color-bg-card-elevated;
+    border-color: rgba($color-white, 0.2);
+  }
+
+  &:active {
+    transform: scale(0.92);
+  }
+}
+
+.body {
+  padding: 20px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  
+  /* Hide scrollbar */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@keyframes modalAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}

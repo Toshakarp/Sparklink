@@ -1,0 +1,28 @@
+@use '../../styles/variables.scss' as *;
+
+.input {
+  width: 100%;
+  box-sizing: border-box;
+  background-color: $color-bg-card-elevated;
+  border: 1px solid $border-medium;
+  border-radius: $radius-input;
+  padding: 12px 14px;
+  color: $text-primary;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &::placeholder {
+    color: $text-secondary;
+  }
+
+  &:focus {
+    border-color: rgba($color-white, 0.4);
+    box-shadow: 0 0 0 2px rgba($color-white, 0.08);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
