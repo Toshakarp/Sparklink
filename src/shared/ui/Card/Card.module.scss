@@ -1,0 +1,52 @@
+@use '../../styles/variables.scss' as *;
+
+.card {
+  background-color: $color-bg-card;
+  border: 1px solid $border-subtle;
+  border-radius: $radius-card;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.25s ease;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+
+  &.clickable {
+    cursor: pointer;
+
+    &:hover:not(:has(button:hover)):not(:has([data-stop-card-hover])) {
+      background-color: $color-bg-card-hover;
+      border-color: rgba($color-white, 0.15);
+      transform: translateY(-2px);
+    }
+
+    &:active:not(:has(button:active)):not(:has([data-stop-card-hover]:active)) {
+      transform: translateY(0) scale(0.98);
+    }
+  }
+}
+
+.square {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.small {
+  padding: 12px 14px;
+}
+
+.big {
+  padding: 20px;
+  border-radius: $radius-square;
+}
+
+.glow_green {
+  animation: glowGreenFade $glow-duration ease-out forwards;
+}
+
+.glow_pink {
+  animation: glowPinkFade $glow-duration ease-out forwards;
+}
+
+.glow_warning {
+  animation: glowWarningFade $glow-duration ease-out forwards;
+}

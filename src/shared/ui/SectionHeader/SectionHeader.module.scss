@@ -1,0 +1,65 @@
+@use '../../styles/variables.scss' as *;
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $text-secondary;
+}
+
+.textGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  margin: 0;
+  color: $text-primary;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.level1 {
+  font-size: 22px;
+  letter-spacing: -0.4px;
+}
+
+.level2 {
+  font-size: 17px;
+  letter-spacing: -0.2px;
+}
+
+.level3 {
+  font-size: 15px;
+}
+
+.level4 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: $text-secondary;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: $text-secondary;
+  margin-top: 2px;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+}

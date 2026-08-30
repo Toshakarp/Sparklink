@@ -1,0 +1,111 @@
+@use '../../styles/variables.scss' as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+  width: 100%;
+}
+
+.previewBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-xs $spacing-md;
+  background-color: $color-bg-card-hover;
+  border: 1px solid $border-subtle;
+  border-radius: $radius-sm;
+  font-size: 13px;
+}
+
+.previewItem {
+  display: inline-flex;
+  align-items: center;
+  gap: $gap-xs;
+}
+
+.previewLabel {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: $text-secondary;
+}
+
+.previewEmojiBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  font-size: 17px;
+  border-radius: $radius-xs;
+  background-color: rgba($color-white, 0.08);
+  border: 1.5px solid $color-white;
+  box-shadow: 0 0 6px rgba($color-white, 0.25);
+}
+
+.currentBadge {
+  border: 1.5px dashed $color-yellow;
+  background-color: rgba($color-yellow, 0.1);
+  box-shadow: none;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  max-height: 160px;
+  overflow-y: auto;
+  padding: 6px;
+  background-color: $color-bg-card;
+  border: 1px solid $border-subtle;
+  border-radius: $radius-input;
+  -webkit-overflow-scrolling: touch;
+
+  /* Hide scrollbar */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.emojiBtn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  line-height: 1;
+  height: 38px;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  background: transparent;
+  border: 1.5px solid transparent;
+  transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    background-color: $border-medium;
+    transform: scale(1.15);
+  }
+
+  &:active {
+    transform: scale(0.92);
+  }
+
+  &.selected {
+    background-color: rgba($color-white, 0.15);
+    border: 2px solid $color-white;
+    box-shadow: 0 0 10px rgba($color-white, 0.45);
+    transform: scale(1.08);
+    z-index: 2;
+  }
+
+  &.current {
+    background-color: rgba($color-yellow, 0.08);
+    border: 1.5px dashed $color-yellow;
+    box-shadow: 0 0 8px rgba($color-yellow, 0.3);
+  }
+}
+

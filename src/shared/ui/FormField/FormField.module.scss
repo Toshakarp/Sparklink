@@ -1,0 +1,18 @@
+@use '../../styles/variables.scss' as *;
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  color: $text-secondary;
+}
+
+.requiredStar {
+  color: $color-pink;
+}
