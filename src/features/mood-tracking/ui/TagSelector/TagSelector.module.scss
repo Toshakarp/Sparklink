@@ -1,0 +1,11 @@
+@use '../../../../shared/styles/variables.scss' as *;
+
+.selectorWrapper {
+  width: 100%;
+}
+
+.tagsGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

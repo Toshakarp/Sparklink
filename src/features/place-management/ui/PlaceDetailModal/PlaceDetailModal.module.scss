@@ -1,0 +1,151 @@
+@use '../../../../shared/styles/variables.scss' as *;
+
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.heroSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  padding: 8px 0 4px;
+}
+
+.emojiLarge {
+  font-size: 48px;
+  line-height: 1;
+}
+
+.titleLarge {
+  font-size: 18px;
+  font-weight: 700;
+  color: $text-primary;
+}
+
+.addressRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba($color-white, 0.06);
+  padding: 5px 12px;
+  border-radius: $radius-oval;
+}
+
+.addressIcon {
+  color: $color-pink;
+}
+
+.addressText {
+  font-size: 12px;
+  color: $text-secondary;
+}
+
+.descCard {
+  background: rgba($color-white, 0.04);
+  border: 1px solid $border-subtle;
+  padding: 12px 14px;
+  border-radius: 14px;
+}
+
+.descTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: $text-secondary;
+  margin-bottom: 4px;
+}
+
+.descText {
+  font-size: 14px;
+  color: $text-primary;
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+.metaSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.metaLabel {
+  font-size: 13px;
+  color: $text-secondary;
+}
+
+.budgetPill {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: $radius-oval;
+  background: rgba($color-white, 0.08);
+  border: 1px solid $border-subtle;
+
+  &[data-color-level="1"] {
+    color: $color-green;
+    background: rgba($color-green, 0.12);
+    border-color: rgba($color-green, 0.25);
+  }
+
+  &[data-color-level="2"] {
+    color: $color-yellow;
+    background: rgba($color-yellow, 0.12);
+    border-color: rgba($color-yellow, 0.25);
+  }
+
+  &[data-color-level="3"] {
+    color: $color-orange;
+    background: rgba($color-orange, 0.12);
+    border-color: rgba($color-orange, 0.25);
+  }
+
+  &[data-color-level="4"],
+  &[data-color-level="5"] {
+    color: $color-pink;
+    background: rgba($color-pink, 0.12);
+    border-color: rgba($color-pink, 0.25);
+  }
+}
+
+.tagsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.likeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.heartActive {
+  color: $color-pink;
+}
+
+.likedPulse {
+  animation: modalHeartPulse 0.4s ease;
+}
+
+@keyframes modalHeartPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}

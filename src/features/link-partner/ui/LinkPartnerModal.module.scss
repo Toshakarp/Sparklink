@@ -1,0 +1,120 @@
+@use '@/shared/styles/variables.scss' as *;
+
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-lg;
+}
+
+.headerIntro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: $gap-xs;
+}
+
+.iconBadge {
+  width: 52px;
+  height: 52px;
+  border-radius: $radius-oval;
+  background: rgba($color-pink, 0.12);
+  border: 1px solid rgba($color-pink, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $color-pink;
+  margin-bottom: $spacing-xs;
+  box-shadow: $glow-pink;
+}
+
+
+.title {
+  font-size: 18px;
+  font-weight: 700;
+  color: $text-primary;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: $text-secondary;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.stepsCard {
+  background: rgba($color-white, 0.03);
+  border: 1px solid $border-subtle;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+}
+
+.stepItem {
+  display: flex;
+  align-items: flex-start;
+  gap: $gap-sm;
+  font-size: 13px;
+  line-height: 1.4;
+  color: $text-secondary;
+}
+
+.stepNumber {
+  width: 20px;
+  height: 20px;
+  border-radius: $radius-oval;
+  background: rgba($color-white, 0.1);
+  color: $text-primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.linkContainer {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+}
+
+.linkLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.linkInputRow {
+  display: flex;
+  align-items: center;
+  gap: $gap-sm;
+  background: $color-bg-card-hover;
+  border: 1px solid $border-medium;
+  border-radius: $radius-input;
+  padding: $spacing-xs $spacing-sm;
+}
+
+.linkText {
+  flex: 1;
+  font-size: 13px;
+  color: $text-primary;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: monospace;
+}
+
+.actionButtons {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+  margin-top: $spacing-xs;
+}
+

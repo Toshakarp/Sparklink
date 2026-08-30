@@ -1,0 +1,53 @@
+@use '../../../../shared/styles/variables.scss' as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: center;
+  padding: 4px 0 8px;
+}
+
+.warningIconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: $radius-oval;
+  background-color: $warning-bg;
+  border: 1px solid $warning-border;
+  color: $warning-color-text;
+  margin: 0 auto;
+  box-shadow: $glow-warning;
+}
+
+.title {
+  font-size: 17px;
+  font-weight: 700;
+  color: $text-primary;
+  margin: 0;
+}
+
+.description {
+  font-size: 14px;
+  color: $text-secondary;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.buttonRow {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.cancelBtn {
+  flex: 1;
+  height: 46px;
+}
+
+.confirmBtn {
+  flex: 1;
+  height: 46px;
+}

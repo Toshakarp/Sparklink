@@ -1,0 +1,31 @@
+@use '../../../../shared/styles/variables.scss' as *;
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.textarea {
+  width: 100%;
+  padding: 12px 14px;
+  background-color: $color-bg-card-elevated;
+  border: 1px solid $border-medium;
+  border-radius: $radius-input;
+  color: $text-primary;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 72px;
+  outline: none;
+  transition: border-color 0.15s ease;
+
+  &:focus {
+    border-color: $color-blue;
+  }
+
+  &::placeholder {
+    color: $text-muted;
+  }
+}

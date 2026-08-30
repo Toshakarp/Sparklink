@@ -1,0 +1,229 @@
+@use '../../../../shared/styles/variables.scss' as *;
+
+.card {
+  width: 100%;
+  padding: 16px;
+  background-color: $color-bg-card-hover;
+  border-radius: $radius-card;
+  border: 1px solid $border-subtle;
+  transition: all 0.25s ease;
+}
+
+.idleMode {
+  background: linear-gradient(180deg, $color-bg-card-elevated 0%, $color-bg-card-hover 100%);
+  border-color: $border-medium;
+}
+
+.resultMode {
+  border-color: rgba($color-green, 0.6);
+  box-shadow: $glow-green;
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+.rollingMode {
+  opacity: 0.9;
+}
+
+.stateWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+.idleEmoji {
+  font-size: 36px;
+  margin-bottom: 8px;
+  animation: floatDice 3s ease-in-out infinite;
+}
+
+@keyframes floatDice {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.idleTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: $text-primary;
+  margin: 0 0 6px 0;
+}
+
+.idleSubtitle {
+  font-size: 13px;
+  color: $text-secondary;
+  line-height: 1.4;
+  margin: 0 0 16px 0;
+  max-width: 280px;
+}
+
+.actionBtn {
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 12px;
+}
+
+.rollingHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: $color-blue;
+  margin-bottom: 14px;
+}
+
+.spinIcon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+.skeletonRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 8px;
+  background-color: $border-subtle;
+  border-radius: 12px;
+}
+
+.skeletonEmoji {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background-color: $border-medium;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.skeletonTexts {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.skeletonLineLong {
+  width: 70%;
+  height: 14px;
+  border-radius: 4px;
+  background-color: $border-medium;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.skeletonLineShort {
+  width: 40%;
+  height: 10px;
+  border-radius: 4px;
+  background-color: $border-subtle;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+.resultHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.resultBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: $color-blue;
+  background-color: rgba($color-blue, 0.12);
+  padding: 3px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.resultBody {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 12px;
+  background-color: $border-subtle;
+  margin-bottom: 10px;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: $border-medium;
+  }
+}
+
+.resultEmojiBox {
+  font-size: 30px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $border-medium;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.resultInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+}
+
+.resultTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: $text-primary;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.resultSubtitle {
+  font-size: 12px;
+  color: $text-secondary;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tagsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  width: 100%;
+  margin-bottom: 14px;
+}
+
+.btnRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  width: 100%;
+}
+
+.againBtn, .detailsBtn {
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 8px 12px;
+}
