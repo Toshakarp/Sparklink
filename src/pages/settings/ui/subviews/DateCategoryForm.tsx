@@ -49,7 +49,7 @@ export const DateCategoryForm: FC<DateCategoryFormProps> = ({
       </FormField>
 
       <FormField label="Название категории" required>
-        <Input
+        <Input maxLength={30} showCount
           placeholder="Например: Романтика, Активный отдых..."
           value={label}
           onChange={(e) => setLabel(e.target.value)}

@@ -61,7 +61,7 @@ export const PlaceForm: FC<PlaceFormProps> = ({
       </FormField>
 
       <FormField label="Название места" required>
-        <Input
+        <Input maxLength={40} showCount
           placeholder="Например: Уютное кафе на набережной"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
@@ -90,7 +90,7 @@ export const PlaceForm: FC<PlaceFormProps> = ({
       )}
 
       <FormField label="Адрес / локация">
-        <Input
+        <Input maxLength={60} showCount
           placeholder="ул. Примерная, 10 или станция метро"
           value={address}
           onChange={(e) => setAddress(e.target.value)}

@@ -55,7 +55,7 @@ export const MoodTagForm: FC<MoodTagFormProps> = ({
       </FormField>
 
       <FormField label="Название тега настроения" required>
-        <Input
+        <Input maxLength={30} showCount
           placeholder="Например: Хочу обнимашек, Нужен кофе..."
           value={label}
           onChange={(e) => setLabel(e.target.value)}
