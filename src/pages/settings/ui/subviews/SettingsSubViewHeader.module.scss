@@ -1,0 +1,23 @@
+@use '../../../../shared/styles/variables.scss' as *;
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 20px;
+  gap: 12px;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.title {
+  color: $text-primary;
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+}

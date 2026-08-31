@@ -1,0 +1,16 @@
+@use '../../../../shared/styles/variables.scss' as *;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  background-color: $bg-primary;
+  padding-bottom: 20px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+}
