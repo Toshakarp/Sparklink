@@ -1,0 +1,167 @@
+@use '@/shared/styles/variables.scss' as *;
+
+.loginContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  height: 100dvh;
+  padding: $spacing-lg $app-padding-x $spacing-xl;
+  background: $color-bg-canvas;
+  max-width: $max-app-width;
+  margin: 0 auto;
+  position: relative;
+  justify-content: space-between;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.heroSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-top: $spacing-xxl;
+  gap: $gap-md;
+}
+
+.brandBadge {
+  width: 72px;
+  height: 72px;
+  border-radius: $radius-oval;
+  background: linear-gradient(135deg, rgba($color-pink, 0.2), rgba($color-purple, 0.2));
+  border: 1px solid rgba($color-pink, 0.4);
+  box-shadow: $glow-pink;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $color-pink;
+  margin-bottom: $spacing-xs;
+  animation: pulseGlow 4s infinite ease-in-out;
+}
+
+
+.titleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xs;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 800;
+  color: $text-primary;
+  letter-spacing: -0.5px;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 15px;
+  color: $text-secondary;
+  margin: 0;
+  max-width: 280px;
+  line-height: 1.45;
+}
+
+.featuresList {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sm;
+  margin: $spacing-xl 0;
+}
+
+.featureItem {
+  display: flex;
+  align-items: center;
+  gap: $gap-md;
+  padding: $spacing-md;
+  background: rgba($color-white, 0.03);
+  border: 1px solid $border-subtle;
+  border-radius: $radius-card;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    border-color: $border-medium;
+    transform: translateY(-1px);
+  }
+}
+
+.featureIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: $radius-input;
+  background: rgba($color-white, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: $color-white;
+
+  &.pink {
+    color: $color-pink;
+    background: rgba($color-pink, 0.12);
+  }
+
+  &.blue {
+    color: $color-blue;
+    background: rgba($color-blue, 0.12);
+  }
+
+  &.orange {
+    color: $color-orange;
+    background: rgba($color-orange, 0.12);
+  }
+}
+
+.featureText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+}
+
+.featureTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: $text-primary;
+}
+
+.featureDesc {
+  font-size: 12px;
+  color: $text-secondary;
+  line-height: 1.35;
+}
+
+.actionSection {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-md;
+  margin-top: auto;
+}
+
+.dividerRow {
+  display: flex;
+  align-items: center;
+  gap: $gap-md;
+  width: 100%;
+}
+
+.dividerLine {
+  flex: 1;
+  height: 1px;
+  background: $border-medium;
+}
+
+.dividerText {
+  font-size: 12px;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}

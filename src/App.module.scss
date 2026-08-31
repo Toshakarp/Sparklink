@@ -1,0 +1,32 @@
+@use './shared/styles/variables.scss' as *;
+
+.appContainer {
+  width: 100%;
+  max-width: $max-app-width;
+  margin: 0 auto;
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background-color: $bg-primary;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 40px rgba($color-black, 0.6);
+}
+
+.mainScrollArea {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  padding: 0 $app-padding-x;
+
+  /* Hide scrollbar */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

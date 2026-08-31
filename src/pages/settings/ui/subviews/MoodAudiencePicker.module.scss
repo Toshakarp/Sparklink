@@ -1,0 +1,39 @@
+@use '../../../../shared/styles/variables.scss' as *;
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  width: 100%;
+}
+
+.optionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background-color: $color-bg-card-hover;
+  border: 1px solid $border-subtle;
+  border-radius: $radius-input;
+  color: $text-secondary;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background-color: $color-bg-card-elevated;
+    color: $color-white;
+  }
+
+  &.active {
+    background-color: $attention-bg;
+    border-color: $attention-border;
+    color: $color-pink;
+  }
+}
+
+.icon {
+  flex-shrink: 0;
+}
