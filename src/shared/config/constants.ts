@@ -19,12 +19,12 @@ export const DEFAULT_ENERGY_LEVEL = 50;
 export const ENERGY_STEP = 5;
 
 export const DEFAULT_EMOTIONS = [
-  { id: '1', title: 'Радость', emoji: '😊', type: 'positive' },
-  { id: '2', title: 'Спокойствие', emoji: '😌', type: 'positive' },
-  { id: '3', title: 'Грусть', emoji: '😔', type: 'difficult' },
-  { id: '4', title: 'Усталость', emoji: '😴', type: 'difficult' },
-  { id: '5', title: 'Тревога', emoji: '😟', type: 'difficult' },
-  { id: '6', title: 'Злость', emoji: '😠', type: 'difficult' },
-  { id: '7', title: 'Обычное', emoji: '😐', type: 'neutral' },
-  { id: '8', title: 'Вдохновение', emoji: '🤩', type: 'positive' },
+  { id: 'happy', title: 'Радость', emoji: '😊', type: 'positive' },
+  { id: 'calm', title: 'Спокойствие', emoji: '😌', type: 'positive' },
+  { id: 'sad', title: 'Грусть', emoji: '😔', type: 'difficult' },
+  { id: 'tired', title: 'Усталость', emoji: '😴', type: 'difficult' },
+  { id: 'anxious', title: 'Тревога', emoji: '😟', type: 'difficult' },
+  { id: 'angry', title: 'Злость', emoji: '😠', type: 'difficult' },
+  { id: 'neutral', title: 'Обычное', emoji: '😐', type: 'neutral' },
+  { id: 'inspired', title: 'Вдохновение', emoji: '🤩', type: 'positive' },
 ];
