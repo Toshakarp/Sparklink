@@ -1,4 +1,3 @@
-import React from 'react';
 import type { FC } from 'react';
 import { Sparkles } from 'lucide-react';
 import styles from '../RandomizerWheel/RandomizerWheel.module.scss';

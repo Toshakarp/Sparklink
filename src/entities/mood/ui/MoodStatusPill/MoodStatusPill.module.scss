@@ -11,7 +11,8 @@
   &.interactive {
     cursor: pointer;
     transition: transform 0.15s ease, background-color 0.2s ease, border-color 0.2s ease;
-
+    -webkit-tap-highlight-color: transparent;
+    
     &:hover {
       background-color: $color-bg-card-hover;
       border-color: rgba($color-white, 0.2);

@@ -85,11 +85,6 @@
   border: 1.5px solid transparent;
   transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 
-  &:hover {
-    background-color: $border-medium;
-    transform: scale(1.15);
-  }
-
   &:active {
     transform: scale(0.92);
   }

@@ -18,10 +18,12 @@
   user-select: none;
   white-space: nowrap;
 
-  &:hover:not(:disabled) {
-    background-color: $color-bg-card-hover;
-    border-color: $border-medium;
-    color: $text-primary;
+  @media (hover: hover) {
+    &:hover:not(:disabled) {
+      background-color: $color-bg-card-hover;
+      border-color: $border-medium;
+      color: $text-primary;
+    }
   }
 
   &:active:not(:disabled) {

@@ -33,5 +33,15 @@ body {
   padding-inline: var(--app-padding-inline);
   padding-bottom: calc(var(--tabbar-height) + #{$spacing-xl});
   min-height: 100vh;
+  
   box-sizing: border-box;
+}
+
+button, 
+a, 
+input, 
+select, 
+textarea,
+[role="button"] {
+  -webkit-tap-highlight-color: transparent;
 }
