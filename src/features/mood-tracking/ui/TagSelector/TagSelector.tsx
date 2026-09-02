@@ -1,4 +1,3 @@
-import React from 'react';
 import type { FC } from 'react';
 import { MoodTag } from '@/shared/ui';
 import type { TagDTO, UserDTO } from '@/shared/api/mock/types';

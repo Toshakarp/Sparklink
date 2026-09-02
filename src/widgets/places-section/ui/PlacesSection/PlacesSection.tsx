@@ -21,7 +21,6 @@ export const PlacesSection: FC<PlacesSectionProps> = ({
   const places = usePlaceStore((state) => state.dateIdeas);
   const tags = usePlaceStore((state) => state.dateTags);
   const budgetTiers = usePlaceStore((state) => state.budgetTiers);
-  const onOptimisticLike = usePlaceStore((state) => state.incrementCount);
 
   const {
     isFilterModalOpen,
@@ -82,7 +81,6 @@ export const PlacesSection: FC<PlacesSectionProps> = ({
                   budgetTier={budgetTier}
                   tags={placeTags}
                   onClick={() => onOpenDetails(place)}
-                  onOptimisticLike={onOptimisticLike}
                 />
               );
             })}

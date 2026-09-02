@@ -1,4 +1,3 @@
-import React from 'react';
 import type { FC } from 'react';
 import { Tag, type TagProps } from '@/shared/ui';
 import type { BudgetTierDTO } from '@/shared/api/mock';

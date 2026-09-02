@@ -1,64 +1,50 @@
 import type { FC } from 'react';
-import { SettingsSubViewHeader } from './SettingsSubViewHeader';
-import { Card, SectionHeader } from '@/shared/ui';
 import { useUserStore } from '@/entities/user';
+import { SettingsSubViewHeader } from './SettingsSubViewHeader';
 import styles from './AppearanceManagerView.module.scss';
+
+const PRESET_COLORS = [
+  { label: 'Розовый (по умолчанию)', value: '#ff2d55' },
+  { label: 'Лавандовый', value: '#af52de' },
+  { label: 'Индиго', value: '#5856d6' },
+  { label: 'Мятный', value: '#34c759' },
+  { label: 'Персиковый', value: '#ff9500' },
+  { label: 'Небесный', value: '#007aff' },
+];
 
 export interface AppearanceManagerViewProps {
   onBack: () => void;
 }
 
-const ACCENT_COLORS = [
-  { name: 'Циан', value: '#00e5ff' },
-  { name: 'Розовый', value: '#ff2d55' },
-  { name: 'Фиолетовый', value: '#af52de' },
-  { name: 'Оранжевый', value: '#ff9500' },
-  { name: 'Зелёный', value: '#34c759' },
-  { name: 'Жёлтый', value: '#ffd60a' },
-  { name: 'Индиго', value: '#5856d6' },
-  { name: 'Красный', value: '#ff3b30' },
-];
-
-export const AppearanceManagerView: FC<AppearanceManagerViewProps> = ({
-  onBack,
-}) => {
-  const appearance = useUserStore(state => state.appearance) || { accentColor: '#ff2d55' };
-  const onUpdateAppearance = useUserStore(state => state.updateAppearance);
-
-  const selectColor = (color: string) => {
-    onUpdateAppearance({
-      ...appearance,
-      accentColor: color,
-    });
-    document.documentElement.style.setProperty('--accent-color', color);
-  };
+export const AppearanceManagerView: FC<AppearanceManagerViewProps> = ({ onBack }) => {
+  const currentUser = useUserStore(state => state.currentUser);
+  const updateThemeColor = useUserStore(state => state.updateThemeColor);
+  const currentColor = currentUser?.themeColor || '#ff2d55';
 
   return (
-    <div className={styles.container}>
-      <SettingsSubViewHeader title="Внешний вид" onBack={onBack} />
+    <div className={styles.view}>
+      <SettingsSubViewHeader title="Оформление" onBack={onBack} />
 
-      <div className={styles.section}>
-        <SectionHeader title="Цветовой акцент" />
-        <Card className={styles.card}>
-          <div className={styles.colorsRow}>
-            {ACCENT_COLORS.map((c) => (
-              <button
-                key={c.value}
-                type="button"
-                className={styles.colorBtn}
-                onClick={() => selectColor(c.value)}
-              >
-                <div
-                  className={`${styles.colorDot} ${
-                    appearance.accentColor === c.value ? styles.activeColor : ''
-                  }`}
-                  style={{ backgroundColor: c.value }}
-                />
-                <span className={styles.colorName}>{c.name}</span>
-              </button>
-            ))}
+      <div className={styles.content}>
+        <div className={styles.section}>
+          <div className={styles.sectionTitle}>Цветовой акцент приложения</div>
+          <div className={styles.colorGrid}>
+            {PRESET_COLORS.map(c => {
+              const isSelected = currentColor === c.value;
+              return (
+                <button
+                  key={c.value}
+                  type="button"
+                  className={`${styles.colorItem} ${isSelected ? styles.active : ''}`}
+                  onClick={() => updateThemeColor(c.value)}
+                >
+                  <span className={styles.circle} style={{ backgroundColor: c.value }} />
+                  <span className={styles.label}>{c.label}</span>
+                </button>
+              );
+            })}
           </div>
-        </Card>
+        </div>
       </div>
     </div>
   );

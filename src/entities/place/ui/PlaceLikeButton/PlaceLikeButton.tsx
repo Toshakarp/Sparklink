@@ -1,4 +1,3 @@
-import React from 'react';
 import type { FC, MouseEvent } from 'react';
 import { Heart } from 'lucide-react';
 import { IconButton } from '@/shared/ui';

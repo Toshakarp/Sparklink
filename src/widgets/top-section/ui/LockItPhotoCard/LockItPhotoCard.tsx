@@ -36,7 +36,6 @@ export const LockItPhotoCard: FC<LockItPhotoCardProps> = ({
     <Card
       className={`${styles.card} ${className}`.trim()}
       onClick={onCardClick}
-      interactive={Boolean(onCardClick)}
     >
       <div className={styles.avatarBadge}>
         <UserAvatar user={user} size="small" isPartner={!isCurrentUser} />

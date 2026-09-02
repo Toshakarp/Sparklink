@@ -42,9 +42,9 @@ export const moodService = {
     // TODO: [Supabase Realtime Integration]
     // Upsert status to Supabase 'mood_statuses' table:
     // await supabase.from('mood_statuses').upsert({ user_id: myUserId, emotion_id: emotionId, energy_level: energyLevel, updated_at: new Date().toISOString() });
+    console.log('updated:', emotionId, energyLevel )
     return Promise.resolve();
   },
-
   /**
    * Uploads and updates Locket photo widget.
    */
@@ -52,6 +52,7 @@ export const moodService = {
     // TODO: [Supabase Storage / TMA Cloud Integration]
     // 1. Upload compressed blob to Supabase storage bucket 'locket_photos'.
     // 2. Update 'mood_statuses.locket_photo_url' and trigger instant partner push notification.
+    console.log('photo updated:', photoUrl)
     return Promise.resolve();
   }
 };

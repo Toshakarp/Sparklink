@@ -37,7 +37,7 @@ export const PlacesSectionHeader: FC<PlacesSectionHeaderProps> = ({
           </div>
         </IconButton>
         <IconButton
-          variant="primary"
+          variant="default"
           size="sm"
           onClick={onOpenAddModal}
           aria-label="Добавить место"

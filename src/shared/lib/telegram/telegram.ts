@@ -129,7 +129,7 @@ class TelegramService {
       // ignore
     }
     try {
-      window.Telegram?.WebApp?.close?.();
+      (window as any).Telegram?.WebApp?.close?.();
     } catch {
       // ignore
     }

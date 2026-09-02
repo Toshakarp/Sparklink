@@ -1,4 +1,3 @@
-import React from 'react';
 import type { FC } from 'react';
 import { Sparkles, RefreshCw, ChevronRight } from 'lucide-react';
 import { Button } from '@/shared/ui';

@@ -8,7 +8,7 @@ export interface SettingsListItemProps {
   title: string;
   subtitle?: string;
   count?: number;
-  onClick: () => void;
+  onClick?: () => void;
   isDestructive?: boolean;
   rightElement?: React.ReactNode;
 }
@@ -26,7 +26,6 @@ export const SettingsListItem: React.FC<SettingsListItemProps> = ({
     <Card
       className={`${styles.item} ${isDestructive ? styles.destructive : ''}`}
       onClick={onClick}
-      interactive
     >
       <div className={styles.left}>
         <div className={styles.iconBox}>{icon}</div>

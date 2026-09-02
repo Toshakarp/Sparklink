@@ -1,4 +1,3 @@
-import React from 'react';
 import type { FC } from 'react';
 import { Heart, Copy, Check, Send } from 'lucide-react';
 import { Modal, Button } from '@/shared/ui';

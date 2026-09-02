@@ -1,4 +1,3 @@
-import React from 'react';
 import type { FC } from 'react';
 import { Avatar } from '@/shared/ui';
 import type { UserDTO } from '@/shared/api/mock';

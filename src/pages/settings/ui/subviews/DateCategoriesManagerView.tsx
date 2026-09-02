@@ -21,7 +21,6 @@ export const DateCategoriesManagerView: FC<DateCategoriesManagerViewProps> = ({ 
     addDateCategory({
       label: data.label,
       emoji: data.emoji,
-      type: 'date',
     });
     setIsAddModalOpen(false);
   };

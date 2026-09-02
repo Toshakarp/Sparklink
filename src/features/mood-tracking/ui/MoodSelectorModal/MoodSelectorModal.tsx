@@ -1,4 +1,3 @@
-import React from 'react';
 import type { FC } from 'react';
 import { Modal, Button, Tag, Slider } from '@/shared/ui';
 import { ENERGY_LEVEL_MARKS, ENERGY_STEP, DEFAULT_EMOTIONS } from '@/shared/config/constants';
