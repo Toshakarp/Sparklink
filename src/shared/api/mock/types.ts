@@ -7,10 +7,10 @@ export interface UserDTO {
   photoUrl?: string | null;
   themeColor: string;
   notificationsEnabled?: boolean;
-  moodId?: string; 
-  energyLevel?: number; 
-  lockitPhotoUrl?: string | null;
-  pairId?: string | null;
+  moodId?: string;        
+  energyLevel?: number;   
+  lockitPhotoUrl?: string | null; 
+  pairId?: string | null; 
 }
 
 
@@ -39,6 +39,7 @@ export interface PairDTO {
   };
 }
 
+
 export interface TagDTO {
   id: string;
   label: string;
@@ -49,7 +50,6 @@ export interface TagDTO {
   selectedByPartner?: boolean;
   markedBy?: string[];
 }
-
 
 export interface BudgetTierDTO {
   id: string;
@@ -68,16 +68,23 @@ export interface PlaceDTO {
   title: string;
   emoji?: string;
   iconName?: string;
+  address?: string;
+  description?: string;  
   clickCount: number;
   lastClickedAt: string | null;
   cooldownUntil?: string | null;
-  categoryIds: string[]; 
-  budgetId?: string; 
+  categoryIds?: string[];
+  tagIds?: string[]; 
+  budgetId?: string;
+  createdAt?: string;
+  url?: string;
 }
 
 export interface CreatePlaceDTO {
   title: string;
   emoji: string;
+  address?: string;
+  description?: string;
   categoryIds: string[];
   budgetId?: string;
 }
@@ -102,3 +109,4 @@ export interface EmotionDTO {
   emoji: string;
   type?: 'difficult' | 'neutral' | 'positive';
 }
+

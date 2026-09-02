@@ -22,7 +22,7 @@ export const AddPlaceModal: FC<AddPlaceModalProps> = ({
       emoji: data.emoji,
       address: data.address,
       description: data.description,
-      tagIds: data.tagIds || [],
+      categoryIds: data.categoryIds || [],
       budgetId: data.budgetId,
     });
     onClose();
