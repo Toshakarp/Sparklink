@@ -5,6 +5,9 @@ import { createMockRepository } from '@/shared/api/core/MockRepository';
 import { useUserStore } from '@/entities/user/model/useUserStore';
 import { tgService } from '@/shared/lib/telegram/telegram';
 
+// ============================================================================
+// Статусы инициализации приложения:
+// ============================================================================
 // 'checking'         -> Идет проверка окружения и данных
 // 'browser_mock'     -> Запущено в обычном браузере (включаем MockRepository и демо-режим)
 // 'telegram_no_pair' -> Запущено в Telegram, но у юзера еще нет пары (показываем онбординг)
@@ -34,22 +37,18 @@ export const useInitStore = create<InitStore>((set) => ({
         firstName: tgUser.first_name || 'Пользователь',
         photoUrl: tgUser.photo_url || undefined
       } : undefined);
-
-      const mockUser = await fallbackApi.getUserByTelegramId(tgUser?.id?.toString() || 'demo_user');
-      if (mockUser) {
-        useUserStore.getState().setCurrentUser(mockUser);
-      }
       set({ status: 'browser_mock', api: fallbackApi });
     };
 
+    // 1. Проверяем, запущено ли приложение внутри Telegram Mini App (TMA)
     const inTMA = await tgService.isAvailable();
     if (!inTMA) {
-      // Обычный браузер 
+      // Сценарий А: Обычный браузер (Dev-режим, превью или веб-версия)
       await startMockMode();
       return;
     }
 
-    // Запуск внутри Telegram TMA
+    // Сценарий Б: Запуск внутри Telegram TMA
     let liveApi: IRepository;
     try {
       const { createSupabaseRepository } = await import('@/shared/api/supabase/SupabaseRepository');
@@ -68,7 +67,7 @@ export const useInitStore = create<InitStore>((set) => ({
     }
 
     try {
-      //Создаем или обновляем запись текущего пользователя в таблице users
+      // 2. Создаем или обновляем запись текущего пользователя в таблице users
       const currentUser: UserDTO = liveApi.upsertUser
         ? await liveApi.upsertUser({
             telegramId: tgUser.id.toString(),
@@ -85,16 +84,14 @@ export const useInitStore = create<InitStore>((set) => ({
 
       useUserStore.getState().setCurrentUser(currentUser);
 
-      // наличие параметра перехода по инвайт-ссылке (start_param = "invite_<userId>")
+      // 3. Проверяем наличие параметра перехода по инвайт-ссылке (start_param = "invite_<userId>")
       const initDataRaw = tgService.getInitData();
       let startParam = null;
       if (initDataRaw) {
          try {
             const params = new URLSearchParams(initDataRaw);
             startParam = params.get('start_param');
-         } catch(e) {
-          console.error('error init tg getInitData:', e)
-         }
+         } catch(e) {}
       }
       
       // Fallback на случай если SDK не вернул, а объект window.Telegram существует
@@ -121,15 +118,17 @@ export const useInitStore = create<InitStore>((set) => ({
         }
       }
 
-      // статус наличия пары
+      // 4. Проверяем статус наличия пары
       if (!currentUser.pairId) {
         set({ status: 'telegram_no_pair', api: liveApi });
       } else {
         set({ status: 'telegram_ready', api: liveApi });
       }
 
-    } catch (e) {
-      console.error("Init Error:", e);
+    } catch (e: any) {
+      console.error("Init Error (Supabase failed or tables missing):", e);
+      // Сбрасываем авторизацию, чтобы пользователь гарантированно попадал на экран логина
+      useUserStore.getState().setCurrentUser(null);
       await startMockMode(tgUser);
     }
   }
