@@ -1,4 +1,3 @@
-import React from 'react';
 import type { FC, MouseEvent } from 'react';
 import { Card, TagList } from '@/shared/ui';
 import { BudgetTag } from '../BudgetTag/BudgetTag';

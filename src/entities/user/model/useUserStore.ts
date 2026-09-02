@@ -1,102 +1,98 @@
 import { create } from 'zustand';
-import { userApi } from '../api/userApi';
-import type { UserDTO, AppearanceSettingsDTO, NotificationSettingsDTO } from '@/shared/api/mock/types';
 import { tgService } from '@/shared/lib/telegram/telegram';
+import type { UserDTO } from '@/shared/api/mock/types';
+import { useInitStore } from '@/app/model/useInitStore';
 
-interface UserState {
+// ============================================================================
+// Zustand Store: Управление текущим пользователем и его настройками
+// ============================================================================
+
+export interface UserState {
   currentUser: UserDTO | null;
-  appearance: AppearanceSettingsDTO;
-  notifications: NotificationSettingsDTO;
   isLoading: boolean;
   isAuth: boolean;
-  isDemo: boolean;
-  fetchUser: (isDemo?: boolean) => Promise<void>;
-  setAuth: (isAuth: boolean, isDemo?: boolean) => void;
-  updateAppearance: (settings: AppearanceSettingsDTO) => void;
-  updateNotifications: (settings: NotificationSettingsDTO) => void;
-  resetUser: () => void;
-  logout: () => void;
+  login: () => Promise<void>;
+  updateThemeColor: (color: string) => void;
+  updateNotifications: (enabled: boolean) => void;
+  updateLockitPhoto: (photoUrl: string) => Promise<void>;
+  updateMood: (emotionId: string, energyLevel: number) => Promise<void>;
+  setCurrentUser: (user: UserDTO | null) => void;
 }
 
 export const useUserStore = create<UserState>((set, get) => ({
   currentUser: null,
-  appearance: { accentColor: '#ff2d55', theme: 'dark' },
-  notifications: {
-    partnerAttention: true,
-    moodUpdates: true,
-    newLockItPhotos: true,
-    dateMatches: true,
-    soundAndHaptics: true,
-  },
   isLoading: false,
   isAuth: false,
-  isDemo: false,
-
-  fetchUser: async (isDemo = false) => {
+  
+  // --------------------------------------------------------------------------
+  // Установка активного пользователя и флага авторизации
+  // --------------------------------------------------------------------------
+  setCurrentUser: (user) => set({ currentUser: user, isAuth: !!user }),
+  
+  // --------------------------------------------------------------------------
+  // Синхронизация данных пользователя через активный репозиторий
+  // --------------------------------------------------------------------------
+  login: async () => {
     set({ isLoading: true });
     try {
-      const user = await userApi.getCurrentUser(isDemo || get().isDemo);
-      set({
-        currentUser: user,
-        appearance: { ...get().appearance, accentColor: user.themeColor },
-        isLoading: false,
-      });
-      if (user.themeColor) {
-        document.documentElement.style.setProperty('--accent-color', user.themeColor);
-        document.documentElement.style.setProperty('--my-color', user.themeColor);
-      }
+      const api = useInitStore.getState().api;
+      if (!api) throw new Error("API не инициализирован");
+      
+      const tgUser = tgService.getTelegramUser();
+      const tgId = tgUser?.id ? String(tgUser.id) : 'demo_user';
+      
+      const user = await api.getUserByTelegramId(tgId);
+      set({ currentUser: user, isAuth: !!user, isLoading: false });
+      tgService.haptic('success');
     } catch {
       set({ isLoading: false });
     }
   },
-
-  setAuth: (isAuth: boolean, isDemo = false) => {
-    set({ isAuth, isDemo });
-  },
-
-  updateAppearance: (settings) => {
-    set((state) => ({
-      appearance: settings,
-      currentUser: state.currentUser ? {
-        ...state.currentUser,
-        themeColor: settings.accentColor,
-      } : null
-    }));
-    if (settings.accentColor) {
-      document.documentElement.style.setProperty('--accent-color', settings.accentColor);
-      document.documentElement.style.setProperty('--my-color', settings.accentColor);
-    }
-    userApi.updateAppearance(settings);
-    tgService.haptic('success');
-  },
-
-  updateNotifications: (settings) => {
-    set({ notifications: settings });
-    userApi.updateNotifications(settings);
-    tgService.haptic('success');
-  },
-
-  resetUser: () => {
-    set({
-      appearance: { accentColor: '#ff2d55', theme: 'dark' },
-      notifications: {
-        partnerAttention: true,
-        moodUpdates: true,
-        newLockItPhotos: true,
-        dateMatches: true,
-        soundAndHaptics: true,
+  
+  updateLockitPhoto: async (photoUrl: string) => {
+    const api = useInitStore.getState().api;
+    const { currentUser } = get();
+    if (api && currentUser) {
+      try {
+        await api.updateLockitPhoto(currentUser.id, photoUrl);
+      } catch (e) {
+        console.error('Failed to save lockit photo:', e);
       }
-    });
-    tgService.haptic('warning');
+    }
+    set((state) => ({
+      currentUser: state.currentUser ? { ...state.currentUser, lockitPhotoUrl: photoUrl } : null
+    }));
+    tgService.haptic('success');
   },
 
-  logout: () => {
-    set({
-      currentUser: null,
-      isAuth: false,
-      isDemo: false,
-    });
-    tgService.haptic('warning');
+  updateMood: async (emotionId: string, energyLevel: number) => {
+    const api = useInitStore.getState().api;
+    const { currentUser } = get();
+    if (api && currentUser) {
+      try {
+        await api.updateUserMood(currentUser.id, energyLevel, emotionId);
+      } catch (e) {
+        console.error('Failed to update mood in database:', e);
+      }
+    }
+    set((state) => ({
+      currentUser: state.currentUser ? { ...state.currentUser, moodId: emotionId, energyLevel } : null
+    }));
+    tgService.haptic('success');
+  },
+
+  updateThemeColor: (color) => {
+    set((state) => ({
+      currentUser: state.currentUser ? { ...state.currentUser, themeColor: color } : null
+    }));
+    tgService.haptic('light');
+  },
+  
+  updateNotifications: (enabled) => {
+    set((state) => ({
+      currentUser: state.currentUser ? { ...state.currentUser, notificationsEnabled: enabled } : null
+    }));
+    tgService.haptic('light');
   },
 }));
 

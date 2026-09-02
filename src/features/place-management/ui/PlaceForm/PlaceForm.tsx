@@ -1,16 +1,16 @@
+import React from 'react';
 import type { FC } from 'react';
-import { FormField, FormActions, Input, EmojiPicker } from '@/shared/ui';
+import { FormField, FormActions, Input, Textarea, EmojiPicker, TagPicker } from '@/shared/ui';
 import { BudgetPicker } from '@/entities';
-import type { BudgetTierDTO, TagDTO } from '@/shared/api/mock';
-import { usePlaceForm, type PlaceFormData } from '../../model/usePlaceForm';
-import { TagPicker } from '@/shared/ui';
+import type { BudgetTierDTO, CreatePlaceDTO } from '@/shared/api/mock/types';
+import type { DateCategoryDTO } from '@/shared/api/core/IRepository';
 import styles from './PlaceForm.module.scss';
 
-export type { PlaceFormData };
+export type PlaceFormData = CreatePlaceDTO;
 
 export interface PlaceFormProps {
   initialData?: Partial<PlaceFormData>;
-  dateTags?: TagDTO[];
+  dateTags?: DateCategoryDTO[];
   budgetTiers?: BudgetTierDTO[];
   submitLabel?: string;
   onSubmit: (data: PlaceFormData) => void;
@@ -29,26 +29,34 @@ export const PlaceForm: FC<PlaceFormProps> = ({
   onDelete,
   deleteLabel = 'Удалить место',
 }) => {
-  const {
-    emoji,
-    setEmoji,
-    title,
-    setTitle,
-    address,
-    setAddress,
-    description,
-    setDescription,
-    selectedTagIds,
-    handleToggleTag,
-    selectedBudgetId,
-    setSelectedBudgetId,
-    handleSubmit,
-    isValid,
-  } = usePlaceForm({
-    initialData,
-    budgetTiers,
-    onSubmit,
-  });
+  const [emoji, setEmoji] = React.useState(initialData?.emoji || '📍');
+  const [title, setTitle] = React.useState(initialData?.title || '');
+  const [address, setAddress] = React.useState(initialData?.address || '');
+  const [description, setDescription] = React.useState(initialData?.description || '');
+  const [selectedTagIds, setSelectedTagIds] = React.useState<string[]>(initialData?.categoryIds || []);
+  const [selectedBudgetId, setSelectedBudgetId] = React.useState<string | undefined>(initialData?.budgetId);
+
+  const isValid = title.trim().length > 0 && selectedTagIds.length > 0;
+
+  const handleToggleTag = (tagId: string) => {
+    setSelectedTagIds(prev => 
+      prev.includes(tagId) ? prev.filter(id => id !== tagId) : [...prev, tagId]
+    );
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isValid) return;
+    
+    onSubmit({
+      title: title.trim(),
+      emoji,
+      address: address.trim() || undefined,
+      description: description.trim() || undefined,
+      categoryIds: selectedTagIds,
+      budgetId: selectedBudgetId,
+    });
+  };
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
@@ -61,7 +69,9 @@ export const PlaceForm: FC<PlaceFormProps> = ({
       </FormField>
 
       <FormField label="Название места" required>
-        <Input maxLength={40} showCount
+        <Input 
+          maxLength={40} 
+          showCount
           placeholder="Например: Уютное кафе на набережной"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
@@ -89,21 +99,24 @@ export const PlaceForm: FC<PlaceFormProps> = ({
         </FormField>
       )}
 
-      <FormField label="Адрес / локация">
-        <Input maxLength={60} showCount
-          placeholder="ул. Примерная, 10 или станция метро"
+            <FormField label="Адрес или ссылка на карты">
+        <Input 
+          maxLength={80} 
+          showCount
+          placeholder="Например: ул. Пушкина, 10 или метро Арбатская"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
         />
       </FormField>
 
-      <FormField label="Заметки и детали">
-        <textarea
-          className={styles.textarea}
-          placeholder="Что взять с собой, промокоды, столик у окна..."
+      <FormField label="Заметки и описание">
+        <Textarea 
+          maxLength={300} 
+          showCount
+          rows={3}
+          placeholder="Например: Заказать столик у окна, попробовать матча-латте"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          rows={3}
         />
       </FormField>
 

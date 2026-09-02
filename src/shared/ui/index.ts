@@ -15,3 +15,4 @@ export * from './Slider/Slider';
 export * from './ToggleSwitch/ToggleSwitch';
 export * from './TagPicker/TagPicker';
 export * from './TagList/TagList';
+export * from './Textarea/Textarea';

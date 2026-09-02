@@ -1,17 +1,24 @@
 import { create } from 'zustand';
-import { pairApi, type PairInviteResult } from '../api/pairApi';
 import type { UserDTO } from '@/shared/api/mock/types';
 import { tgService } from '@/shared/lib/telegram/telegram';
+import { useInitStore } from '@/app/model/useInitStore';
 
-interface PairState {
+
+export interface PairInviteResult {
+  inviteUrl: string;
+  expiresAt: string;
+}
+
+export interface PairState {
   partnerUser: UserDTO | null;
   lastSyncedAt: string;
   isLoading: boolean;
   inviteData: PairInviteResult | null;
-  fetchPartner: (isDemo?: boolean) => Promise<void>;
+  fetchPartner: (pairId?: string, currentUserId?: string | number) => Promise<void>;
   generateInviteLink: (userId?: string | number) => Promise<PairInviteResult>;
   unlinkPartner: () => void;
   resetPair: () => void;
+  setPartnerUser: (user: UserDTO | null) => void;
 }
 
 export const usePairStore = create<PairState>((set) => ({
@@ -19,22 +26,38 @@ export const usePairStore = create<PairState>((set) => ({
   lastSyncedAt: '18:29',
   isLoading: false,
   inviteData: null,
+  
+  setPartnerUser: (user) => set({ partnerUser: user }),
 
-  fetchPartner: async (isDemo = false) => {
+  fetchPartner: async (pairId?: string, currentUserId?: string | number) => {
     set({ isLoading: true });
     try {
-      const user = await pairApi.getPartnerUser(isDemo);
-      set({ partnerUser: user, isLoading: false });
+      const api = useInitStore.getState().api;
+      if (!api || !pairId) {
+        set({ partnerUser: null, isLoading: false });
+        return;
+      }
+      
+      const partner = await api.getPartner(pairId, currentUserId ? String(currentUserId) : '');
+      set({ partnerUser: partner, isLoading: false });
     } catch {
       set({ isLoading: false });
     }
   },
 
   generateInviteLink: async (userId?: string | number) => {
-
     set({ isLoading: true });
     try {
-      const result = await pairApi.createInviteLink(userId);
+      const botUsername = import.meta.env.VITE_TELEGRAM_BOT_USERNAME || 'our_soulmate_app_bot';
+      const targetId = userId || 'partner';
+
+      // Формируем прямую ссылку deep-link: https://t.me/<bot>?startapp=invite_<UUID>
+      const inviteUrl = `https://t.me/${botUsername}?startapp=invite_${targetId}`;
+      const result = {
+        inviteUrl,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+      };
+      
       set({ inviteData: result, isLoading: false });
       return result;
     } catch (e) {
@@ -42,7 +65,7 @@ export const usePairStore = create<PairState>((set) => ({
       throw e;
     }
   },
-
+  
   unlinkPartner: () => {
     set((state) => ({
       partnerUser: state.partnerUser ? {
@@ -53,10 +76,9 @@ export const usePairStore = create<PairState>((set) => ({
         photoUrl: null,
       } : null
     }));
-    pairApi.unlinkPartner();
     tgService.haptic('warning');
   },
-
+  
   resetPair: () => {
     set({ partnerUser: null, inviteData: null });
     tgService.haptic('warning');

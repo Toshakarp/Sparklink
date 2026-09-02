@@ -1,13 +1,14 @@
 import type { FC } from 'react';
 import { Modal } from '@/shared/ui';
 import { PlaceForm, type PlaceFormData } from '../PlaceForm/PlaceForm';
-import type { PlaceDTO, TagDTO, BudgetTierDTO } from '@/shared/api/mock';
+import type { PlaceDTO, BudgetTierDTO } from '@/shared/api/mock';
+import type { DateCategoryDTO } from '@/shared/api/core/IRepository';
 
 export interface EditPlaceModalProps {
   isOpen: boolean;
   onClose: () => void;
   place: PlaceDTO | null;
-  dateTags?: TagDTO[];
+  dateTags?: DateCategoryDTO[];
   budgetTiers?: BudgetTierDTO[];
   onSavePlace: (place: PlaceDTO) => void;
   onDeletePlace: (id: string) => void;
@@ -27,9 +28,9 @@ export const EditPlaceModal: FC<EditPlaceModalProps> = ({
   const initialData: PlaceFormData = {
     title: place.title,
     emoji: place.emoji || '☕️',
-    address: place.address,
-    description: place.description,
-    tagIds: place.tagIds || [],
+    address: place.address || '',
+    description: place.description || '',
+    categoryIds: place.categoryIds || place.tagIds || [],
     budgetId: place.budgetId,
   };
 
@@ -41,7 +42,8 @@ export const EditPlaceModal: FC<EditPlaceModalProps> = ({
       address: data.address,
       description: data.description,
       budgetId: data.budgetId,
-      tagIds: data.tagIds || [],
+      categoryIds: data.categoryIds || [],
+      tagIds: data.categoryIds || [],
     });
     onClose();
   };

@@ -1,22 +1,27 @@
 import { create } from 'zustand';
-import { placeService } from "../api/placeService";
-import type { PlaceDTO, TagDTO, BudgetTierDTO, CreatePlaceDTO } from '@/shared/api/mock/types';
+import type { PlaceDTO, BudgetTierDTO, CreatePlaceDTO } from '@/shared/api/mock/types';
+import type { DateCategoryDTO } from '@/shared/api/core/IRepository';
 import { tgService } from '@/shared/lib/telegram/telegram';
+import { useInitStore } from '@/app/model/useInitStore';
 
-interface PlaceState {
+
+export interface PlaceState {
   dateIdeas: PlaceDTO[];
-  dateTags: TagDTO[];
+  dateTags: DateCategoryDTO[];
   budgetTiers: BudgetTierDTO[];
   likedPlaceIds: string[];
   isLoading: boolean;
-  fetchPlacesData: () => Promise<void>;
+  
+  fetchPlacesData: (pairId?: string) => Promise<void>;
   addPlace: (place: CreatePlaceDTO) => void;
   updatePlace: (place: PlaceDTO) => void;
   deletePlace: (id: string) => void;
   incrementCount: (id: string) => void;
-  addDateCategory: (tag: Omit<TagDTO, 'id'>) => void;
-  updateDateCategory: (tag: TagDTO) => void;
+  
+  addDateCategory: (tag: Omit<DateCategoryDTO, 'id' | 'pair_id'>) => void;
+  updateDateCategory: (tag: DateCategoryDTO) => void;
   deleteDateCategory: (id: string) => void;
+  
   updateBudgetTier: (tier: BudgetTierDTO) => void;
 }
 
@@ -27,28 +32,36 @@ export const usePlaceStore = create<PlaceState>((set) => ({
   likedPlaceIds: [],
   isLoading: false,
 
-  fetchPlacesData: async () => {
+  fetchPlacesData: async (pairId?: string) => {
     set({ isLoading: true });
     try {
-      const [places, tags, budgets] = await Promise.all([
-        placeService.getPlaces(),
-        placeService.getDateTags(),
-        placeService.getBudgetTiers()
-      ]);
-      set({ dateIdeas: places, dateTags: tags, budgetTiers: budgets, isLoading: false });
-    } catch (e) {
+      const api = useInitStore.getState().api;
+      if (!api || !pairId) {
+        set({ isLoading: false });
+        return;
+      }
+      
+      const data = await api.getPairData(pairId);
+      set({ 
+        dateIdeas: data.places, 
+        dateTags: data.placeCategories, 
+        budgetTiers: data.budgetTiers, 
+        isLoading: false 
+      });
+    } catch {
       set({ isLoading: false });
     }
   },
-
+  
   addPlace: (newPlace) => {
     const place: PlaceDTO = {
-      id: `place-${Date.now()}`,
+      id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `place-${Date.now()}`,
       title: newPlace.title,
-      description: newPlace.description || '',
-      address: newPlace.address || '',
       emoji: newPlace.emoji || '🍿',
-      tagIds: newPlace.tagIds || [],
+      address: newPlace.address,
+      description: newPlace.description,
+      categoryIds: newPlace.categoryIds || [],
+      tagIds: newPlace.categoryIds || [],
       budgetId: newPlace.budgetId || 'budget',
       clickCount: 0,
       lastClickedAt: null,
@@ -57,14 +70,14 @@ export const usePlaceStore = create<PlaceState>((set) => ({
     set((state) => ({ dateIdeas: [place, ...state.dateIdeas] }));
     tgService.haptic('success');
   },
-
+  
   updatePlace: (updatedPlace) => {
     set((state) => ({
       dateIdeas: state.dateIdeas.map((p) => (p.id === updatedPlace.id ? updatedPlace : p))
     }));
     tgService.haptic('success');
   },
-
+  
   deletePlace: (id) => {
     set((state) => ({ dateIdeas: state.dateIdeas.filter((p) => p.id !== id) }));
     tgService.haptic('medium');
@@ -83,18 +96,22 @@ export const usePlaceStore = create<PlaceState>((set) => ({
     });
     tgService.haptic('medium');
   },
-
+  
   addDateCategory: (tag) => {
-    const newCategory: TagDTO = { ...tag, id: `date-tag-${Date.now()}`, type: 'date' };
+    const newCategory: DateCategoryDTO = { 
+      ...tag, 
+      id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `cat-${Date.now()}`,
+      pair_id: 'local'
+    };
     set((state) => ({ dateTags: [...state.dateTags, newCategory] }));
     tgService.haptic('success');
   },
-
+  
   updateDateCategory: (tag) => {
     set((state) => ({ dateTags: state.dateTags.map((t) => (t.id === tag.id ? tag : t)) }));
     tgService.haptic('success');
   },
-
+  
   deleteDateCategory: (id) => {
     set((state) => ({ dateTags: state.dateTags.filter((t) => t.id !== id) }));
     tgService.haptic('medium');
@@ -105,3 +122,4 @@ export const usePlaceStore = create<PlaceState>((set) => ({
     tgService.haptic('success');
   }
 }));
+

@@ -1,4 +1,3 @@
-import React from 'react';
 import type { FC } from 'react';
 import { Heart } from 'lucide-react';
 import { Modal, Card, Button } from '@/shared/ui';
@@ -31,7 +30,7 @@ export const PlaceDetailModal: FC<PlaceDetailModalProps> = ({
 
   const isLikedByMe = likedPlaceIds.includes(livePlace.id);
   const budgetTier = livePlace.budgetId ? getBudgetTier(livePlace.budgetId, budgetTiers) : undefined;
-  const tags = allTags.filter(t => livePlace.tagIds?.includes(t.id));
+  const tags = allTags.filter(t => livePlace.categoryIds?.includes(t.id));
   const clickCount = livePlace.clickCount || 0;
 
   const handleIncrement = () => {

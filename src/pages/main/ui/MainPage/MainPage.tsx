@@ -5,6 +5,7 @@ import { OurMoodSection } from '@/widgets/mood-section';
 import { MoodSelectorModal } from '@/features/mood-tracking';
 import { PhotoUploadModal } from '@/features/photo-upload';
 import { useMoodStore } from '@/entities/mood';
+import { useUserStore } from '@/entities/user';
 import styles from './MainPage.module.scss';
 
 export interface MainPageProps {
@@ -16,8 +17,8 @@ export const MainPage: FC<MainPageProps> = ({ onOpenSettings }) => {
   const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
 
   const myMood = useMoodStore((state) => state.myMood);
-  const saveMood = useMoodStore((state) => state.saveMood);
-  const saveMyPhoto = useMoodStore((state) => state.saveMyPhoto);
+  const updateMood = useUserStore((state) => state.updateMood);
+  const updateLockitPhoto = useUserStore((state) => state.updateLockitPhoto);
 
   return (
     <div className={styles.page}>
@@ -35,14 +36,14 @@ export const MainPage: FC<MainPageProps> = ({ onOpenSettings }) => {
         onClose={() => setIsMoodModalOpen(false)}
         currentEmotionId={myMood?.emotionId}
         currentEnergyLevel={myMood?.energyLevel}
-        onSaveMood={saveMood}
+        onSaveMood={updateMood}
       />
 
       <PhotoUploadModal
         isOpen={isPhotoModalOpen}
         onClose={() => setIsPhotoModalOpen(false)}
         currentPhotoUrl={myMood?.locketPhotoUrl}
-        onSavePhoto={saveMyPhoto}
+        onSavePhoto={updateLockitPhoto}
       />
     </div>
   );

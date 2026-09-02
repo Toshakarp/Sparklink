@@ -1,13 +1,18 @@
 export interface UserDTO {
   id: string | number;
-  telegramId: number;
+  telegramId: number | string;
   firstName: string;
   lastName?: string;
   username?: string;
   photoUrl?: string | null;
   themeColor: string;
   notificationsEnabled?: boolean;
+  moodId?: string;        
+  energyLevel?: number;   
+  lockitPhotoUrl?: string | null; 
+  pairId?: string | null; 
 }
+
 
 export interface MoodStatusDTO {
   id: string;
@@ -15,7 +20,7 @@ export interface MoodStatusDTO {
   emotionId: string;
   emotionTitle: string;
   emotionEmoji: string;
-  energyLevel: number; // 0..100
+  energyLevel: number;
   locketPhotoUrl?: string | null;
   locketPhotoTime?: string | null;
   updatedAt: string;
@@ -34,11 +39,12 @@ export interface PairDTO {
   };
 }
 
+
 export interface TagDTO {
   id: string;
   label: string;
   emoji: string;
-  type: 'date' | 'mood';
+  type?: 'date' | 'mood';
   audience?: 'together' | 'alone';
   selectedByMe?: boolean;
   selectedByPartner?: boolean;
@@ -60,16 +66,18 @@ export interface BudgetTierDTO {
 export interface PlaceDTO {
   id: string;
   title: string;
-  description: string;
-  address?: string;
   emoji?: string;
   iconName?: string;
+  address?: string;
+  description?: string;  
   clickCount: number;
   lastClickedAt: string | null;
   cooldownUntil?: string | null;
-  tagIds: string[];
+  categoryIds?: string[];
+  tagIds?: string[]; 
   budgetId?: string;
   createdAt?: string;
+  url?: string;
 }
 
 export interface CreatePlaceDTO {
@@ -77,7 +85,7 @@ export interface CreatePlaceDTO {
   emoji: string;
   address?: string;
   description?: string;
-  tagIds: string[];
+  categoryIds: string[];
   budgetId?: string;
 }
 
@@ -101,3 +109,4 @@ export interface EmotionDTO {
   emoji: string;
   type?: 'difficult' | 'neutral' | 'positive';
 }
+
