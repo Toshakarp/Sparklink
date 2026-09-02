@@ -43,7 +43,7 @@ export async function initDevEnvironment(): Promise<void> {
             tgWebAppData: initDataRaw,
             tgWebAppVersion: '8.0',
             tgWebAppPlatform: 'tdesktop',
-          }
+          } as any,
         });
       }
     } catch {
@@ -99,20 +99,30 @@ class TelegramService {
 
   public getTelegramUser(): TelegramUser | null {
     try {
-      // Access user object directly from Telegram WebApp initData
-      const user = initData.user();
-      if (!user) {
-        return null;
+      const rawUser = (window as any).Telegram?.WebApp?.initDataUnsafe?.user;
+      if (rawUser) {
+        return {
+          id: rawUser.id,
+          first_name: rawUser.first_name,
+          last_name: rawUser.last_name,
+          username: rawUser.username,
+          language_code: rawUser.language_code,
+          photo_url: rawUser.photo_url,
+        };
       }
 
-      return {
-        id: user.id,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        username: user.username,
-        language_code: user.language_code,
-        photo_url: user.photo_url,
-      };
+      const user = initData.user();
+      if (user) {
+        return {
+          id: user.id,
+          first_name: (user as any).firstName || (user as any).first_name,
+          last_name: (user as any).lastName || (user as any).last_name,
+          username: user.username,
+          language_code: (user as any).languageCode || (user as any).language_code,
+          photo_url: (user as any).photoUrl || (user as any).photo_url,
+        };
+      }
+      return null;
     } catch {
       return null;
     }
@@ -120,7 +130,6 @@ class TelegramService {
 
   public close(): void {
     try {
-      // Closes the Telegram Mini App
       if (miniApp.close.isAvailable()) {
         miniApp.close();
         return;
