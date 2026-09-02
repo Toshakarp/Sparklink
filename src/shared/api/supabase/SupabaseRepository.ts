@@ -1,18 +1,9 @@
 import { supabase } from './client';
 import type { IRepository, PairData } from '../core/IRepository';
 
-// ============================================================================
-// Реализация репозитория для работы с реальной базой данных Supabase
-// ============================================================================
-// Этот модуль отвечает за:
-// 1. Прямые обращения к таблицам PostgreSQL через Supabase Client.
-// 2. Трансформацию snake_case полей базы данных в camelCase DTO-модели приложения.
-// 3. Изоляцию сетевых запросов от UI и Zustand-сторов.
+
 export const createSupabaseRepository = (): IRepository => {
   return {
-    // ------------------------------------------------------------------------
-    // Поиск пользователя по Telegram ID
-    // ------------------------------------------------------------------------
     getUserByTelegramId: async (telegramId) => {
       const { data, error } = await supabase
         .from('users')
@@ -20,11 +11,9 @@ export const createSupabaseRepository = (): IRepository => {
         .eq('telegram_id', telegramId.toString())
         .single();
       
-      // PGRST116 означает "строка не найдена" (юзер впервые зашел) — это не критическая ошибка
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error) throw error;
       if (!data) return null;
 
-      // Маппинг из snake_case структуры таблицы users в camelCase интерфейс UserDTO
       return {
         id: data.id,
         telegramId: data.telegram_id,
@@ -38,9 +27,6 @@ export const createSupabaseRepository = (): IRepository => {
       };
     },
 
-    // ------------------------------------------------------------------------
-    // Получение данных партнера по ID пары
-    // ------------------------------------------------------------------------
     getPartner: async (pairId, currentUserId) => {
       const { data, error } = await supabase
         .from('users')
@@ -49,7 +35,7 @@ export const createSupabaseRepository = (): IRepository => {
         .neq('id', currentUserId)
         .single();
 
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error) throw error;
       if (!data) return null;
 
       return {
@@ -65,11 +51,10 @@ export const createSupabaseRepository = (): IRepository => {
       };
     },
 
-    // Загрузка всех данных, привязанных к паре 
     getPairData: async (pairId): Promise<PairData> => {
-
+      // Параллельно загружаем все связанные таблицы для минимизации задержки
       const [placesRes, categoriesRes, tagsRes, budgetRes] = await Promise.all([
-        supabase.from('places').select('*').eq('pair_id', pairId),
+        supabase.from('places').select('*').eq('pair_id', pairId).order('created_at', { ascending: false }),
         supabase.from('place_categories').select('*').eq('pair_id', pairId),
         supabase.from('mood_tags').select('*').eq('pair_id', pairId),
         supabase.from('budget_tiers').select('*').eq('pair_id', pairId)
@@ -80,10 +65,14 @@ export const createSupabaseRepository = (): IRepository => {
            id: p.id,
            title: p.title,
            emoji: p.emoji,
-           categoryIds: p.category_ids,
+           address: p.address || undefined,
+           description: p.description || undefined,
+           categoryIds: p.category_ids || [],
+           tagIds: p.category_ids || [],
            budgetId: p.budget_id,
            clickCount: p.click_count || 0,
            lastClickedAt: p.last_clicked_at,
+           createdAt: p.created_at,
         })),
         placeCategories: categoriesRes.data || [],
         moodTags: tagsRes.data || [],
@@ -91,8 +80,67 @@ export const createSupabaseRepository = (): IRepository => {
       };
     },
 
+    createPlace: async (pairId, placeData) => {
+      const { data, error } = await supabase
+        .from('places')
+        .insert({
+          pair_id: pairId,
+          title: placeData.title,
+          emoji: placeData.emoji,
+          address: placeData.address || null,
+          description: placeData.description || null,
+          category_ids: placeData.categoryIds || [],
+          budget_id: placeData.budgetId || null,
+          click_count: 0
+        })
+        .select('*')
+        .single();
 
-    // Сохранение текущего настроения и уровня энергии
+      if (error) throw error;
+
+      return {
+        id: data.id,
+        title: data.title,
+        emoji: data.emoji,
+        address: data.address || undefined,
+        description: data.description || undefined,
+        categoryIds: data.category_ids || [],
+        tagIds: data.category_ids || [],
+        budgetId: data.budget_id,
+        clickCount: data.click_count || 0,
+        lastClickedAt: data.last_clicked_at,
+        createdAt: data.created_at,
+      };
+    },
+
+    updatePlace: async (place) => {
+      const { error } = await supabase
+        .from('places')
+        .update({
+          title: place.title,
+          emoji: place.emoji,
+          address: place.address || null,
+          description: place.description || null,
+          category_ids: place.categoryIds || place.tagIds || [],
+          budget_id: place.budgetId || null,
+          click_count: place.clickCount,
+          last_clicked_at: place.lastClickedAt
+        })
+        .eq('id', place.id);
+
+      if (error) throw error;
+    },
+
+
+    deletePlace: async (placeId) => {
+      const { error } = await supabase
+        .from('places')
+        .delete()
+        .eq('id', placeId);
+
+      if (error) throw error;
+    },
+
     updateUserMood: async (userId, energy, moodId) => {
       const { error } = await supabase
         .from('users')
@@ -105,7 +153,6 @@ export const createSupabaseRepository = (): IRepository => {
       if (error) throw error;
     },
 
-    // обновление пользовател
     upsertUser: async (userData) => {
       const { data, error } = await supabase
         .from('users')
@@ -136,13 +183,11 @@ export const createSupabaseRepository = (): IRepository => {
       };
     },
 
-    // Deep link invite flow)
-    // Принимает:
-    // inviterParam: UUID пользователя (или telegram_id fallback, надо будет убрать!!!!!!)
-    // currentUserId: UUID пользователя, перешедшего по ссылке
+    // - inviterParam: UUID пользователя из нашей БД (или telegram_id как fallback)
+    // - currentUserId: UUID текущего пользователя, перешедшего по ссылке
     createPairWithInvite: async (inviterParam, currentUserId) => {
-        
-    let inviterQuery = supabase.from('users').select('*');
+      // Ищем пригласившего пользователя 
+      let inviterQuery = supabase.from('users').select('*');
       if (inviterParam.includes('-')) {
         inviterQuery = inviterQuery.eq('id', inviterParam); // UUID из нашей БД
       } else {
@@ -161,7 +206,7 @@ export const createSupabaseRepository = (): IRepository => {
 
       let pairId = inviter.pair_id;
 
-      // проверяем количество участников
+      //Если у пригласившего уже есть пара, проверяем количество участников
       if (pairId) {
         const { data: existingMembers, error: membersErr } = await supabase
           .from('users')
@@ -175,7 +220,7 @@ export const createSupabaseRepository = (): IRepository => {
           }
         }
       } else {
-        // Если  нет пары, создаем новую запись в таблице pairs
+        // Если у пригласившего еще нет пары, создаем новую запись в таблице pairs
         const { data: newPair, error: pairErr } = await supabase
           .from('pairs')
           .insert({})
@@ -193,7 +238,7 @@ export const createSupabaseRepository = (): IRepository => {
         if (updateInviterErr) throw updateInviterErr;
       }
 
-      // 3. Привязываем пару к текущему пользователю
+      //Привязываем пару к текущему пользователю
       const { error: updateCurrErr } = await supabase
         .from('users')
         .update({ pair_id: pairId })
@@ -216,7 +261,6 @@ export const createSupabaseRepository = (): IRepository => {
       return { pairId, partner: partnerDTO };
     },
 
-    // Обновление фото виджета LockIt
     updateLockitPhoto: async (userId, photoUrl) => {
       const { error } = await supabase
         .from('users')
@@ -230,6 +274,5 @@ export const createSupabaseRepository = (): IRepository => {
     }
   };
 };
-
 
 
