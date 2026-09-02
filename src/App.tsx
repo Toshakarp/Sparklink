@@ -22,20 +22,23 @@ export default function App() {
       initializeTelegram();
       tgService.ready();
       tgService.expand();
-      initialize(); // Запуск проверки окружения и загрузки данных через useInitStore
+      initialize(); // Запуск проверки окружения  useInitStore
     });
   }, [initialize]);
 
   useEffect(() => {
-    if (status === 'telegram_ready' && isAuth && currentUser?.pairId) {
+    if ((status === 'telegram_ready' || status === 'browser_mock') && isAuth && currentUser?.pairId) {
       const pairId = currentUser.pairId;
       const userId = currentUser.id;
+
+      // Загружаем данные партнера, список мест и теги желаний
       usePairStore.getState().fetchPartner(pairId, userId);
       usePlaceStore.getState().fetchPlacesData(pairId);
       useWishTagsStore.getState().fetchTags(pairId);
     }
   }, [status, isAuth, currentUser?.pairId, currentUser?.id]);
 
+  // Синхронизация модели настроения при изменении данных пользователей
   useEffect(() => {
     if (currentUser) {
       useMoodStore.getState().fetchMoods(currentUser, partnerUser);

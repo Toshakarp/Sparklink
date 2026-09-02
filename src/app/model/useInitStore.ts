@@ -3,6 +3,7 @@ import type { IRepository } from '@/shared/api/core/IRepository';
 import type { UserDTO } from '@/shared/api/mock/types';
 import { createMockRepository } from '@/shared/api/core/MockRepository';
 import { useUserStore } from '@/entities/user/model/useUserStore';
+import { tgService } from '@/shared/lib/telegram/telegram';
 
 // 'checking'         -> Идет проверка окружения и данных
 // 'browser_mock'     -> Запущено в обычном браузере (включаем MockRepository и демо-режим)
@@ -18,7 +19,6 @@ interface InitStore {
   setStatus: (status: AppInitStatus) => void;
 }
 
-// Стейт-машина
 export const useInitStore = create<InitStore>((set) => ({
   status: 'checking',
   api: null,
@@ -26,39 +26,48 @@ export const useInitStore = create<InitStore>((set) => ({
   setStatus: (status) => set({ status }),
 
   initialize: async () => {
-    // запущено ли приложение внутри Telegram Mini App
-    const initData = (window as any).Telegram?.WebApp?.initData;
+    // Вспомогательная функция для корректного запуска мок-режима
+    const startMockMode = async (tgUser?: any) => {
+      const fallbackApi = createMockRepository(tgUser ? {
+        id: tgUser.id.toString(),
+        telegramId: tgUser.id.toString(),
+        firstName: tgUser.first_name || 'Пользователь',
+        photoUrl: tgUser.photo_url || undefined
+      } : undefined);
+      const mockUser = await fallbackApi.getUserByTelegramId(tgUser?.id?.toString() || 'demo_user');
+      if (mockUser) {
+        useUserStore.getState().setCurrentUser(mockUser);
+      }
+      set({ status: 'browser_mock', api: fallbackApi });
+    };
 
-    if (!initData) {
-      // Dev-режим, превью или веб-версия
-      // Подключаем моковый репозиторий с локальными данными
-      set({ status: 'browser_mock', api: createMockRepository() });
+    const inTMA = await tgService.isAvailable();
+    if (!inTMA) {
+      // Обычный браузер 
+      await startMockMode();
       return;
     }
 
-    // Сценарий Б: Запуск внутри Telegram TMA
+    // Запуск внутри Telegram TMA
     let liveApi: IRepository;
     try {
-      // Динамический импорт репозитория Supabase предотвращает ошибки в изолированных песочницах
       const { createSupabaseRepository } = await import('@/shared/api/supabase/SupabaseRepository');
       liveApi = createSupabaseRepository();
     } catch (err) {
       console.warn('Supabase не доступен или произошел сбой:', err);
-      set({ status: 'browser_mock', api: createMockRepository() });
+      await startMockMode();
       return;
     }
 
-    // Извлекаем информацию о пользователе Telegram из WebApp initDataUnsafe
-    const tgUser = (window as any).Telegram?.WebApp?.initDataUnsafe?.user;
-
+    // Извлекаем информацию о пользователе Telegram
+    const tgUser = tgService.getTelegramUser();
     if (!tgUser) {
-      // Fallback на случай, если Telegram SDK вернул пустой объект
-      set({ status: 'browser_mock', api: createMockRepository() });
+      await startMockMode();
       return;
     }
 
     try {
-      // 2. Создаем или обновляем запись текущего пользователя в таблице users
+      //Создаем или обновляем запись текущего пользователя в таблице users
       const currentUser: UserDTO = liveApi.upsertUser
         ? await liveApi.upsertUser({
             telegramId: tgUser.id.toString(),
@@ -75,8 +84,22 @@ export const useInitStore = create<InitStore>((set) => ({
 
       useUserStore.getState().setCurrentUser(currentUser);
 
-      //Проверяем наличие start_param = "invite_<userId>"
-      const startParam = (window as any).Telegram?.WebApp?.initDataUnsafe?.start_param;
+      // наличие параметра перехода по инвайт-ссылке (start_param = "invite_<userId>")
+      const initDataRaw = tgService.getInitData();
+      let startParam = null;
+      if (initDataRaw) {
+         try {
+            const params = new URLSearchParams(initDataRaw);
+            startParam = params.get('start_param');
+         } catch(e) {
+          console.error('error init tg getInitData:', e)
+         }
+      }
+      
+      // Fallback на случай если SDK не вернул, а объект window.Telegram существует
+      if (!startParam) {
+          startParam = (window as any).Telegram?.WebApp?.initDataUnsafe?.start_param;
+      }
 
       if (startParam && startParam.startsWith('invite_') && !currentUser.pairId) {
         const inviterParam = startParam.replace('invite_', '');
@@ -86,6 +109,7 @@ export const useInitStore = create<InitStore>((set) => ({
             const { pairId, partner } = await liveApi.createPairWithInvite(inviterParam, currentUser.id);
             currentUser.pairId = pairId;
             useUserStore.getState().setCurrentUser(currentUser);
+
             if (partner) {
               const { usePairStore } = await import('@/entities/pair/model/usePairStore');
               usePairStore.getState().setPartnerUser(partner);
@@ -96,18 +120,16 @@ export const useInitStore = create<InitStore>((set) => ({
         }
       }
 
-      // 4. Проверяем статус наличия пары
+      // статус наличия пары
       if (!currentUser.pairId) {
-        // У пользователя еще нет пары -> отправляем на экран приглашения
         set({ status: 'telegram_no_pair', api: liveApi });
       } else {
-        // Пара успешно установлена -> открываем главное пространство пары
         set({ status: 'telegram_ready', api: liveApi });
       }
+
     } catch (e) {
       console.error("Init Error:", e);
-      // Если БД недоступна — активируем моки, чтобы избежать падения приложения
-      set({ status: 'browser_mock', api: createMockRepository() });
+      await startMockMode(tgUser);
     }
   }
 }));

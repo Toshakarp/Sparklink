@@ -1,17 +1,18 @@
 import type { IRepository, PairData } from './IRepository';
 import type { UserDTO } from '../mock/types';
 
-export const createMockRepository = (): IRepository => {
-  // Локальное in-memory состояние
+export const createMockRepository = (initialUserData?: Partial<UserDTO>): IRepository => {
+  // Локальное in-memory состояние для имитации таблиц БД
   let currentUser: UserDTO = {
-    id: 'mock-user-1',
-    telegramId: 'demo_user',
-    firstName: 'Алексей',
-    themeColor: '#FF4B4B',
+    id: initialUserData?.id || 'mock-user-1',
+    telegramId: initialUserData?.telegramId || 'demo_user',
+    firstName: initialUserData?.firstName || 'Алексей',
+    themeColor: initialUserData?.themeColor || '#FF4B4B',
     pairId: 'mock-pair-id',
     moodId: 'happy',
     energyLevel: 80,
     lockitPhotoUrl: null,
+    photoUrl: initialUserData?.photoUrl,
   };
 
   let partnerUser: UserDTO = {
@@ -26,7 +27,6 @@ export const createMockRepository = (): IRepository => {
   };
 
   return {
-
     getUserByTelegramId: async (_telegramId) => {
       await new Promise((r) => setTimeout(r, 200));
       return currentUser;

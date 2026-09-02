@@ -1,48 +1,50 @@
 import type { FC } from 'react';
-import { useUserStore } from '@/entities/user';
 import { SettingsSubViewHeader } from './SettingsSubViewHeader';
+import { useUserStore } from '@/entities/user';
 import styles from './AppearanceManagerView.module.scss';
 
-const PRESET_COLORS = [
-  { label: 'Розовый (по умолчанию)', value: '#ff2d55' },
-  { label: 'Лавандовый', value: '#af52de' },
-  { label: 'Индиго', value: '#5856d6' },
-  { label: 'Мятный', value: '#34c759' },
-  { label: 'Персиковый', value: '#ff9500' },
-  { label: 'Небесный', value: '#007aff' },
+const THEME_COLORS = [
+  { value: '#FF4B4B', name: 'Красный' },
+  { value: '#FF8B3E', name: 'Оранж' },
+  { value: '#FFB800', name: 'Желтый' },
+  { value: '#00C853', name: 'Зеленый' },
+  { value: '#00B0FF', name: 'Голубой' },
+  { value: '#651FFF', name: 'Лиловый' },
+  { value: '#AA00FF', name: 'Пурпур' },
+  { value: '#F50057', name: 'Розовый' },
 ];
 
 export interface AppearanceManagerViewProps {
   onBack: () => void;
 }
 
-export const AppearanceManagerView: FC<AppearanceManagerViewProps> = ({ onBack }) => {
-  const currentUser = useUserStore(state => state.currentUser);
-  const updateThemeColor = useUserStore(state => state.updateThemeColor);
-  const currentColor = currentUser?.themeColor || '#ff2d55';
+export const AppearanceManagerView: FC<AppearanceManagerViewProps> = ({
+  onBack,
+}) => {
+  const { currentUser, updateThemeColor } = useUserStore();
+  const appearance = currentUser?.themeColor || '#FF4B4B';
 
   return (
-    <div className={styles.view}>
-      <SettingsSubViewHeader title="Оформление" onBack={onBack} />
-
-      <div className={styles.content}>
-        <div className={styles.section}>
-          <div className={styles.sectionTitle}>Цветовой акцент приложения</div>
-          <div className={styles.colorGrid}>
-            {PRESET_COLORS.map(c => {
-              const isSelected = currentColor === c.value;
-              return (
-                <button
-                  key={c.value}
-                  type="button"
-                  className={`${styles.colorItem} ${isSelected ? styles.active : ''}`}
-                  onClick={() => updateThemeColor(c.value)}
-                >
-                  <span className={styles.circle} style={{ backgroundColor: c.value }} />
-                  <span className={styles.label}>{c.label}</span>
-                </button>
-              );
-            })}
+    <div className={styles.container}>
+      <SettingsSubViewHeader title="Внешний вид" onBack={onBack} />
+      
+      <div className={styles.section}>
+        <div className={styles.card}>
+          <div className={styles.colorsRow}>
+            {THEME_COLORS.map((color) => (
+              <button
+                key={color.value}
+                type="button"
+                className={styles.colorBtn}
+                onClick={() => updateThemeColor(color.value)}
+              >
+                <div 
+                  className={`${styles.colorDot} ${appearance === color.value ? styles.activeColor : ''}`}
+                  style={{ backgroundColor: color.value }}
+                />
+                <span className={styles.colorName}>{color.name}</span>
+              </button>
+            ))}
           </div>
         </div>
       </div>
