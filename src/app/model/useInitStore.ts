@@ -34,13 +34,11 @@ export const useInitStore = create<InitStore>((set) => ({
         firstName: tgUser.first_name || 'Пользователь',
         photoUrl: tgUser.photo_url || undefined
       } : undefined);
-<<<<<<< HEAD
+
       const mockUser = await fallbackApi.getUserByTelegramId(tgUser?.id?.toString() || 'demo_user');
       if (mockUser) {
         useUserStore.getState().setCurrentUser(mockUser);
       }
-=======
->>>>>>> fce0f3c (fix: uninitialized tg servise logic)
       set({ status: 'browser_mock', api: fallbackApi });
     };
 
