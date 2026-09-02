@@ -4,6 +4,7 @@ import { Heart, UserPlus, CalendarHeart, Camera, Sparkles } from 'lucide-react';
 import { Button } from '@/shared/ui';
 import { DemoAuthButton } from '@/features/auth-by-demo';
 import { LinkPartnerModal } from '@/features/link-partner';
+import { useUserStore } from '@/entities/user';
 import styles from './LoginPage.module.scss';
 
 export interface LoginPageProps {
@@ -12,6 +13,7 @@ export interface LoginPageProps {
 
 export const LoginPage: FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
+  const isAuth = useUserStore((state) => state.isAuth);
 
   return (
     <div className={styles.loginContainer}>
@@ -19,7 +21,6 @@ export const LoginPage: FC<LoginPageProps> = ({ onLoginSuccess }) => {
         <div className={styles.brandBadge}>
           <Heart size={36} fill="currentColor" />
         </div>
-
         <div className={styles.titleGroup}>
           <h1 className={styles.title}>Us</h1>
           <p className={styles.subtitle}>
@@ -67,23 +68,32 @@ export const LoginPage: FC<LoginPageProps> = ({ onLoginSuccess }) => {
       </div>
 
       <div className={styles.actionSection}>
-        <Button
-          type="button"
-          variant="primary"
-          fullWidth
-          onClick={() => setIsLinkModalOpen(true)}
-          icon={<UserPlus size={18} />}
-        >
-          Привязать партнёра
-        </Button>
-
-        <div className={styles.dividerRow}>
-          <span className={styles.dividerLine} />
-          <span className={styles.dividerText}>или</span>
-          <span className={styles.dividerLine} />
-        </div>
-
-        <DemoAuthButton onSuccess={onLoginSuccess} />
+        {isAuth ? (
+          <>
+            <Button
+              type="button"
+              variant="primary"
+              fullWidth
+              onClick={() => setIsLinkModalOpen(true)}
+              icon={<UserPlus size={18} />}
+            >
+              Привязать партнёра
+            </Button>
+            <div className={styles.dividerRow}>
+              <span className={styles.dividerLine} />
+              <span className={styles.dividerText}>или</span>
+              <span className={styles.dividerLine} />
+            </div>
+            <DemoAuthButton onSuccess={onLoginSuccess} />
+          </>
+        ) : (
+          <>
+            <p style={{ textAlign: 'center', fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '16px' }}>
+              Не удалось подключиться к базе данных или Telegram. Вы можете войти в демо-режим для ознакомления.
+            </p>
+            <DemoAuthButton onSuccess={onLoginSuccess} />
+          </>
+        )}
       </div>
 
       <LinkPartnerModal

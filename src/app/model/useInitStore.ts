@@ -67,20 +67,25 @@ export const useInitStore = create<InitStore>((set) => ({
     }
 
     try {
-      // 2. Создаем или обновляем запись текущего пользователя в таблице users
-      const currentUser: UserDTO = liveApi.upsertUser
-        ? await liveApi.upsertUser({
+      // 2. Создаем или обновляем запись текущего пользователя в таблице users с таймаутом (чтобы не зависать на плохом интернете)
+      const fetchPromise = liveApi.upsertUser
+        ? liveApi.upsertUser({
             telegramId: tgUser.id.toString(),
             firstName: tgUser.first_name || 'Пользователь',
             photoUrl: tgUser.photo_url || null,
           })
-        : (await liveApi.getUserByTelegramId(tgUser.id.toString())) || {
-            id: tgUser.id.toString(),
-            telegramId: tgUser.id.toString(),
-            firstName: tgUser.first_name || 'Пользователь',
-            themeColor: '#FF4B4B',
-            pairId: null,
-          };
+        : liveApi.getUserByTelegramId(tgUser.id.toString());
+
+      const timeoutPromise = new Promise<never>((_, reject) => setTimeout(() => reject(new Error('Supabase Timeout')), 7000));
+      
+      const result = await Promise.race([fetchPromise, timeoutPromise]);
+      const currentUser: UserDTO = result || {
+        id: tgUser.id.toString(),
+        telegramId: tgUser.id.toString(),
+        firstName: tgUser.first_name || 'Пользователь',
+        themeColor: '#FF4B4B',
+        pairId: null,
+      };
 
       useUserStore.getState().setCurrentUser(currentUser);
 
