@@ -1,112 +1,17 @@
-export interface UserDTO {
-  id: string | number;
-  telegramId: number | string;
-  firstName: string;
-  lastName?: string;
-  username?: string;
-  photoUrl?: string | null;
-  themeColor: string;
-  notificationsEnabled?: boolean;
-  moodId?: string;        
-  energyLevel?: number;   
-  lockitPhotoUrl?: string | null; 
-  pairId?: string | null; 
-}
+// для обратной совместимости.
 
+import type { User, NotificationSettings, AppearanceSettings } from '@/entities/user/model/types';
+import type { Place, BudgetTier, CreatePlacePayload } from '@/entities/place/model/types';
+import type { Pair } from '@/entities/pair/model/types';
+import type { MoodStatus, Tag, Emotion } from '@/entities/mood/model/types';
 
-export interface MoodStatusDTO {
-  id: string;
-  userId: string | number;
-  emotionId: string;
-  emotionTitle: string;
-  emotionEmoji: string;
-  energyLevel: number;
-  locketPhotoUrl?: string | null;
-  locketPhotoTime?: string | null;
-  updatedAt: string;
-}
-
-export interface PairDTO {
-  id: string;
-  partner: UserDTO;
-  togetherSince: string;
-  isSync: boolean;
-  lastSyncedAt: string;
-  lockItPhoto?: {
-    url: string;
-    updatedAt: string;
-    authorId: string | number;
-  };
-}
-
-
-export interface TagDTO {
-  id: string;
-  label: string;
-  emoji: string;
-  type?: 'date' | 'mood';
-  audience?: 'together' | 'alone';
-  selectedByMe?: boolean;
-  selectedByPartner?: boolean;
-  markedBy?: string[];
-}
-
-export interface BudgetTierDTO {
-  id: string;
-  name: string;
-  label?: string;
-  range?: string;
-  rangeLabel?: string;
-  emoji: string;
-  colorLevel: 1 | 2 | 3 | 4 | 5;
-  minAmount?: number;
-  maxAmount?: number;
-}
-
-export interface PlaceDTO {
-  id: string;
-  title: string;
-  emoji?: string;
-  iconName?: string;
-  address?: string;
-  description?: string;  
-  clickCount: number;
-  lastClickedAt: string | null;
-  cooldownUntil?: string | null;
-  categoryIds?: string[];
-  tagIds?: string[]; 
-  budgetId?: string;
-  createdAt?: string;
-  url?: string;
-}
-
-export interface CreatePlaceDTO {
-  title: string;
-  emoji: string;
-  address?: string;
-  description?: string;
-  categoryIds: string[];
-  budgetId?: string;
-}
-
-export interface NotificationSettingsDTO {
-  partnerAttention: boolean;
-  moodUpdates: boolean;
-  newLockItPhotos: boolean;
-  dateMatches?: boolean;
-  soundAndHaptics: boolean;
-}
-
-export interface AppearanceSettingsDTO {
-  themeColor?: string;
-  accentColor?: string;
-  theme?: 'dark' | 'oled' | 'system';
-}
-
-export interface EmotionDTO {
-  id: string;
-  title: string;
-  emoji: string;
-  type?: 'difficult' | 'neutral' | 'positive';
-}
-
+export type UserDTO = User;
+export type MoodStatusDTO = MoodStatus;
+export type PairDTO = Pair;
+export type TagDTO = Tag;
+export type BudgetTierDTO = BudgetTier;
+export type PlaceDTO = Place;
+export type CreatePlaceDTO = CreatePlacePayload;
+export type NotificationSettingsDTO = NotificationSettings;
+export type AppearanceSettingsDTO = AppearanceSettings;
+export type EmotionDTO = Emotion;
