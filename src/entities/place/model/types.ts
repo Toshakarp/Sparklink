@@ -9,6 +9,8 @@ export interface Place {
   lastClickedAt: string | null;
   categoryIds?: string[];
   budgetId?: string;
+
+  createdAt?: string;
 }
 
 export interface CreatePlacePayload {
