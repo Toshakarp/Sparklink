@@ -1,10 +1,10 @@
+import type { TagDTO } from '@/shared/api/types/models';
 import { useState } from 'react';
 import type { FC } from 'react';
 import { Pencil, Trash2 } from 'lucide-react';
 import { SettingsSubViewHeader } from './SettingsSubViewHeader';
 import { Card, IconButton, Modal } from '@/shared/ui';
 import { MoodTagForm, type MoodTagFormData } from './MoodTagForm';
-import type { TagDTO } from '@/shared/api/mock/types';
 import { useWishTagsStore } from '@/entities/mood';
 import styles from './MoodTagsManagerView.module.scss';
 
@@ -20,8 +20,7 @@ export const MoodTagsManagerView: FC<MoodTagsManagerViewProps> = ({ onBack }) =>
     addMoodTag({
       label: data.label,
       emoji: data.emoji,
-      type: 'mood',
-      audience: data.category,
+      audience: data.category as 'together' | 'alone',
     });
   };
 
@@ -93,7 +92,7 @@ export const MoodTagsManagerView: FC<MoodTagsManagerViewProps> = ({ onBack }) =>
             initialData={{
               label: editingTag.label || '',
               emoji: editingTag.emoji || '✨',
-              category: (editingTag.audience as 'together' | 'alone') || 'together',
+              category: editingTag.audience || 'together',
             }}
             submitLabel="Сохранить изменения"
             onSubmit={handleEditSubmit}

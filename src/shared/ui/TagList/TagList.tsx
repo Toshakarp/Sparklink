@@ -1,12 +1,12 @@
 import type { FC } from 'react';
 import { Tag } from '../Tag/Tag';
-import type { TagDTO } from '@/shared/api';
+import type { TagDTO, DateCategoryDTO } from '@/shared/api/types/models';
 import styles from './TagList.module.scss';
 
 export interface TagListProps {
-  tags: TagDTO[];
+  tags: (TagDTO | DateCategoryDTO)[];
   className?: string;
-  onTagClick?: (tag: TagDTO) => void;
+  onTagClick?: (tag: TagDTO | DateCategoryDTO) => void;
   activeTagId?: string;
 }
 

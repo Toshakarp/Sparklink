@@ -1,15 +1,15 @@
+import type { PlaceDTO, TagDTO, DateCategoryDTO, BudgetTierDTO } from '@/shared/api/types/models';
 import type { FC, MouseEvent } from 'react';
 import { Card, TagList } from '@/shared/ui';
 import { BudgetTag } from '../BudgetTag/BudgetTag';
 import { PlaceLikeButton } from '../PlaceLikeButton/PlaceLikeButton';
 import { usePlaceStore } from '../../model/usePlaceStore';
-import type { PlaceDTO, BudgetTierDTO, TagDTO } from '@/shared/api/mock/types';
 import styles from './PlaceCard.module.scss';
 
 export interface PlaceCardProps {
   place: PlaceDTO;
   budgetTier?: BudgetTierDTO;
-  tags?: TagDTO[];
+  tags?: (TagDTO | DateCategoryDTO)[];
   onClick?: () => void;
 }
 
