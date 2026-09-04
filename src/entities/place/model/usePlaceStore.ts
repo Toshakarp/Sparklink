@@ -1,9 +1,7 @@
 import { create } from 'zustand';
-import type { PlaceDTO, BudgetTierDTO, CreatePlaceDTO } from '@/shared/api/mock/types';
-import type { DateCategoryDTO } from '@/shared/api/core/IRepository';
-import { tgService } from '@/shared/lib/telegram/telegram';
-import { useInitStore } from '@/app/model/useInitStore';
+import type { PlaceDTO, BudgetTierDTO, CreatePlaceDTO, DateCategoryDTO } from '@/shared/api/types/models';
 
+import { tgService } from '@/shared/lib/telegram/telegram';
 
 export interface PlaceState {
   dateIdeas: PlaceDTO[];
@@ -12,7 +10,7 @@ export interface PlaceState {
   likedPlaceIds: string[];
   isLoading: boolean;
   
-  fetchPlacesData: (pairId?: string) => Promise<void>;
+  setPlacesData: (places: PlaceDTO[], tags: DateCategoryDTO[], tiers: BudgetTierDTO[]) => void;
   addPlace: (place: CreatePlaceDTO) => void;
   updatePlace: (place: PlaceDTO) => void;
   deletePlace: (id: string) => void;
@@ -32,27 +30,8 @@ export const usePlaceStore = create<PlaceState>((set) => ({
   likedPlaceIds: [],
   isLoading: false,
 
-  fetchPlacesData: async (pairId?: string) => {
-    set({ isLoading: true });
-    try {
-      const api = useInitStore.getState().api;
-      if (!api || !pairId) {
-        set({ isLoading: false });
-        return;
-      }
-      
-      const data = await api.getPairData(pairId);
-      set({ 
-        dateIdeas: data.places, 
-        dateTags: data.placeCategories, 
-        budgetTiers: data.budgetTiers, 
-        isLoading: false 
-      });
-    } catch {
-      set({ isLoading: false });
-    }
-  },
-  
+  setPlacesData: (places, tags, tiers) => set({ dateIdeas: places, dateTags: tags, budgetTiers: tiers, isLoading: false }),
+
   addPlace: (newPlace) => {
     const place: PlaceDTO = {
       id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `place-${Date.now()}`,
@@ -61,7 +40,6 @@ export const usePlaceStore = create<PlaceState>((set) => ({
       address: newPlace.address,
       description: newPlace.description,
       categoryIds: newPlace.categoryIds || [],
-      tagIds: newPlace.categoryIds || [],
       budgetId: newPlace.budgetId || 'budget',
       clickCount: 0,
       lastClickedAt: null,
@@ -99,8 +77,8 @@ export const usePlaceStore = create<PlaceState>((set) => ({
   
   addDateCategory: (tag) => {
     const newCategory: DateCategoryDTO = { 
-      ...tag, 
-      id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `cat-${Date.now()}`,
+       ...tag, 
+       id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `cat-${Date.now()}`,
       pair_id: 'local'
     };
     set((state) => ({ dateTags: [...state.dateTags, newCategory] }));
@@ -122,4 +100,3 @@ export const usePlaceStore = create<PlaceState>((set) => ({
     tgService.haptic('success');
   }
 }));
-
