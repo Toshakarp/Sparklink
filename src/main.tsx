@@ -1,3 +1,4 @@
+import { ApiProvider } from './app/providers/ApiProvider';
 import {StrictMode} from 'react';
 import {createRoot} from 'react-dom/client';
 import App from './App.tsx';
@@ -8,11 +9,12 @@ initDevEnvironment().then(() => {
   initializeTelegram();
   tgService.ready();
   tgService.expand();
-
-
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-);
+  
+  createRoot(document.getElementById('root')!).render(
+    <StrictMode>
+      <ApiProvider>
+        <App />
+      </ApiProvider>
+    </StrictMode>,
+  );
 });
