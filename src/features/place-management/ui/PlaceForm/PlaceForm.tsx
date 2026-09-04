@@ -2,8 +2,8 @@ import React from 'react';
 import type { FC } from 'react';
 import { FormField, FormActions, Input, Textarea, EmojiPicker, TagPicker } from '@/shared/ui';
 import { BudgetPicker } from '@/entities';
-import type { BudgetTierDTO, CreatePlaceDTO } from '@/shared/api/mock/types';
-import type { DateCategoryDTO } from '@/shared/api/core/IRepository';
+import type { BudgetTierDTO, CreatePlaceDTO, DateCategoryDTO } from '@/shared/api/types/models';
+
 import styles from './PlaceForm.module.scss';
 
 export type PlaceFormData = CreatePlaceDTO;
