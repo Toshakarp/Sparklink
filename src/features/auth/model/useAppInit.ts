@@ -40,7 +40,7 @@ export const useAppInit = () => {
 
         let liveUserApi, livePlacesApi, livePairApi;
         try {
-          const { createSupabaseUserApi, createSupabasePlacesApi, createSupabasePairApi } = await import('@/shared/api/supabase');
+          const { createSupabaseUserApi, createSupabasePlacesApi, createSupabasePairApi } = await import('@/shared/api/supabase/index');
           liveUserApi = createSupabaseUserApi();
           livePlacesApi = createSupabasePlacesApi();
           livePairApi = createSupabasePairApi();
