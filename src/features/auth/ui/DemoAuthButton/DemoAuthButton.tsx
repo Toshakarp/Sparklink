@@ -1,7 +1,7 @@
 import type { FC, ButtonHTMLAttributes } from 'react';
 import { Sparkles } from 'lucide-react';
 import { Button } from '@/shared/ui';
-import { useDemoAuth } from '../model/useDemoAuth';
+import { useDemoAuth } from '../../model/useDemoAuth';
 import styles from './DemoAuthButton.module.scss';
 
 export interface DemoAuthButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -33,4 +33,3 @@ export const DemoAuthButton: FC<DemoAuthButtonProps> = ({
     </Button>
   );
 };
-
