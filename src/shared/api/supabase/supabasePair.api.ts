@@ -79,7 +79,7 @@ export const createSupabasePairApi = (): IPairApi => ({
     } else {
       const { data: newPair, error: pairErr } = await supabase
         .from(SUPABASE_TABLES.PAIRS)
-        .insert({})
+        .insert([{}])
         .select('*')
         .single();
 

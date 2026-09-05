@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useUserStore } from '@/entities/user';
 import { tgService } from '@/shared/lib/telegram/telegram';
 
@@ -17,8 +17,8 @@ export interface UseLinkPartnerReturn {
 export const useLinkPartner = (isOpen: boolean): UseLinkPartnerReturn => {
   const botname = import.meta.env.VITE_TELEGRAM_BOT_USERNAME;
   const currentUser = useUserStore((state) => state.currentUser);
-  const inviteUrl = currentUser?.id
-    ? `https://t.me/${botname}/app?startapp=invite_${currentUser.id}`
+  const inviteUrl = currentUser?.telegramId
+    ? `https://t.me/${botname}/app?startapp=invite_${currentUser.telegramId}`
     : '';
 
   const [isLoading] = useState(false);
@@ -28,11 +28,6 @@ export const useLinkPartner = (isOpen: boolean): UseLinkPartnerReturn => {
   if (!isOpen && isCopied) {
     setIsCopied(false);
   }
-
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }})
 
   const handleCopyLink = useCallback(async () => {
     if (!inviteUrl) return;
