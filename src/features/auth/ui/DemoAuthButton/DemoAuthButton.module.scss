@@ -1,0 +1,9 @@
+@use '@/shared/styles/variables.scss' as *;
+
+.icon {
+  color: $color-yellow;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}

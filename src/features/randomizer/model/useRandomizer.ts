@@ -1,7 +1,7 @@
-import { useState, useCallback } from 'react';
-import type { PlaceDTO } from '@/shared/api/mock';
-import { tgService } from '@/shared/lib/telegram/telegram';
 import type { UseRandomizerOptions, UseRandomizerReturn } from './types';
+import type { PlaceDTO } from '@/shared/api/types/models';
+import { useState, useCallback } from 'react';
+import { tgService } from '@/shared/lib/telegram/telegram';
 
 export const useRandomizer = ({
   ideas,

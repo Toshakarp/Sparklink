@@ -1,7 +1,7 @@
+import type { PlaceDTO } from '@/shared/api/types/models';
 import type { FC } from 'react';
 import { Heart } from 'lucide-react';
 import { Modal, Card, Button } from '@/shared/ui';
-import type { PlaceDTO } from '@/shared/api/mock/types';
 import { usePlaceStore, getBudgetTier } from '@/entities/place';
 import { PlaceDetailHero } from './PlaceDetailHero';
 import { PlaceDetailMeta } from './PlaceDetailMeta';

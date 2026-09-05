@@ -1,6 +1,6 @@
+import type { UserDTO } from '@/shared/api/types/models';
 import type { FC } from 'react';
 import { Avatar } from '@/shared/ui';
-import type { UserDTO } from '@/shared/api/mock';
 import styles from './PairAvatarGroup.module.scss';
 
 export interface PairAvatarGroupProps {

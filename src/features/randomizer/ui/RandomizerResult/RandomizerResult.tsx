@@ -1,8 +1,8 @@
+import type { PlaceDTO, BudgetTierDTO } from '@/shared/api/types/models';
 import type { FC } from 'react';
 import { Sparkles, RefreshCw, ChevronRight } from 'lucide-react';
 import { Button } from '@/shared/ui';
 import { BudgetTag } from '@/entities/place';
-import type { PlaceDTO, BudgetTierDTO } from '@/shared/api/mock';
 import styles from '../RandomizerWheel/RandomizerWheel.module.scss';
 
 export interface RandomizerResultProps {

@@ -1,12 +1,12 @@
+import type { TagDTO, DateCategoryDTO, BudgetTierDTO } from '@/shared/api/types/models';
 import type { FC } from 'react';
 import { TagList } from '@/shared/ui';
 import { BudgetTag } from "@/entities/place";
-import type { BudgetTierDTO, TagDTO } from '@/shared/api/mock/types';
 import styles from './PlaceDetailModal.module.scss';
 
 export interface PlaceDetailMetaProps {
   budgetTier?: BudgetTierDTO;
-  tags?: TagDTO[];
+  tags?: (TagDTO | DateCategoryDTO)[];
 }
 
 export const PlaceDetailMeta: FC<PlaceDetailMetaProps> = ({

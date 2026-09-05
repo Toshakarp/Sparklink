@@ -1,10 +1,10 @@
+import type { BudgetTierDTO } from '@/shared/api/types/models';
 import { useState} from 'react';
 import type { FC } from 'react';
 import { Pencil, Check } from 'lucide-react';
 import { SettingsSubViewHeader } from './SettingsSubViewHeader';
 import { Card, Input, Button, IconButton } from '@/shared/ui';
 import { BudgetTag } from '@/entities/place';
-import type { BudgetTierDTO } from '@/shared/api/mock/types';
 import { usePlaceStore } from '@/entities/place';
 import { tgService } from '@/shared/lib/telegram/telegram';
 import styles from './BudgetManagerView.module.scss';

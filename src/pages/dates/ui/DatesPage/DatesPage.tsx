@@ -7,7 +7,7 @@ import { PlaceDetailModal, AddPlaceModal, EditPlaceModal } from '@/features/plac
 import { useUserStore } from '@/entities/user';
 import { usePairStore } from '@/entities/pair';
 import { usePlaceStore } from '@/entities/place';
-import type { PlaceDTO } from '@/shared/api';
+import type {  PlaceDTO  } from '@/shared/api/types/models';
 import styles from './DatesPage.module.scss';
 
 export const DatesPage: FC = () => {

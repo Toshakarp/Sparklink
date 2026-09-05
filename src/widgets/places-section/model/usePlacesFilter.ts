@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import type { PlaceDTO } from '@/shared/api';
+import type {  PlaceDTO  } from '@/shared/api/types/models';
 
 export interface UsePlacesFilterProps {
   places: PlaceDTO[];
@@ -13,7 +13,7 @@ export const usePlacesFilter = ({ places }: UsePlacesFilterProps) => {
   const filteredPlaces = useMemo(() => {
     return places.filter((place) => {
       if (selectedTagIds.length > 0) {
-        const hasMatchingTag = place.tagIds?.some((id) => selectedTagIds.includes(id));
+        const hasMatchingTag = place.categoryIds?.some((id: string) => selectedTagIds.includes(id));
         if (!hasMatchingTag) return false;
       }
       if (selectedBudgetIds.length > 0) {
@@ -26,8 +26,8 @@ export const usePlacesFilter = ({ places }: UsePlacesFilterProps) => {
   const hasActiveFilters = selectedTagIds.length > 0 || selectedBudgetIds.length > 0;
   const activeFiltersCount = selectedTagIds.length + selectedBudgetIds.length;
 
-  const handleApplyFilters = (tagIds: string[], budgetIds: string[]) => {
-    setSelectedTagIds(tagIds);
+  const handleApplyFilters = (categoryIds: string[], budgetIds: string[]) => {
+    setSelectedTagIds(categoryIds);
     setSelectedBudgetIds(budgetIds);
   };
 
@@ -38,13 +38,13 @@ export const usePlacesFilter = ({ places }: UsePlacesFilterProps) => {
 
   const handleToggleTag = (tagId: string) => {
     setSelectedTagIds((prev) =>
-      prev.includes(tagId) ? prev.filter((id) => id !== tagId) : [...prev, tagId]
+      prev.includes(tagId) ? prev.filter((id: string) => id !== tagId) : [...prev, tagId]
     );
   };
 
   const handleToggleBudget = (budgetId: string) => {
     setSelectedBudgetIds((prev) =>
-      prev.includes(budgetId) ? prev.filter((id) => id !== budgetId) : [...prev, budgetId]
+      prev.includes(budgetId) ? prev.filter((id: string) => id !== budgetId) : [...prev, budgetId]
     );
   };
 

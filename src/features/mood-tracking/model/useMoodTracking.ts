@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import type { EmotionDTO } from '@/shared/api/mock/types';
+import { useState, useCallback } from 'react';
+import type { EmotionDTO } from '@/shared/api/types/models';
 import { DEFAULT_EMOTIONS } from '@/shared/config/constants';
 import { tgService } from '@/shared/lib/telegram/telegram';
 
@@ -16,21 +16,23 @@ export const useMoodTracking = ({
   isOpen,
   currentEmotionId,
   currentEnergyLevel = 50,
-  emotions = DEFAULT_EMOTIONS as EmotionDTO[],
+  emotions = DEFAULT_EMOTIONS,
   onSaveMood,
   onClose,
 }: UseMoodTrackingOptions) => {
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
   const [selectedEmotionId, setSelectedEmotionId] = useState<string>(
     currentEmotionId || emotions[0]?.id || '1'
   );
   const [energyLevel, setEnergyLevel] = useState<number>(currentEnergyLevel);
 
-  useEffect(() => {
+  if (prevIsOpen !== isOpen) {
+    setPrevIsOpen(isOpen);
     if (isOpen) {
       setSelectedEmotionId(currentEmotionId || emotions[0]?.id || '1');
       setEnergyLevel(currentEnergyLevel ?? 50);
     }
-  }, [isOpen, currentEmotionId, currentEnergyLevel, emotions]);
+  }
 
   const handleSelectEmotion = useCallback((id: string) => {
     setSelectedEmotionId(id);

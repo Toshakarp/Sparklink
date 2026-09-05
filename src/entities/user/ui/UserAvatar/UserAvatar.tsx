@@ -1,6 +1,6 @@
+import type { UserDTO } from '@/shared/api/types/models';
 import React from 'react';
 import { Avatar } from '@/shared/ui';
-import type { UserDTO } from '@/shared/api/mock';
 
 export interface UserAvatarProps {
   user: UserDTO;
