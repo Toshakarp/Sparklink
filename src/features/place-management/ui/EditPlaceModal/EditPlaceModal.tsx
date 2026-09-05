@@ -2,7 +2,7 @@ import type { PlaceDTO, BudgetTierDTO, DateCategoryDTO } from '@/shared/api/type
 import type { FC } from 'react';
 import { Modal } from '@/shared/ui';
 import { PlaceForm, type PlaceFormData } from '../PlaceForm/PlaceForm';
-
+import { useApi } from '@/app/providers/ApiProvider';
 
 export interface EditPlaceModalProps {
   isOpen: boolean;
@@ -23,6 +23,8 @@ export const EditPlaceModal: FC<EditPlaceModalProps> = ({
   onSavePlace,
   onDeletePlace,
 }) => {
+  const { placesApi } = useApi();
+
   if (!place) return null;
 
   const initialData: PlaceFormData = {
@@ -34,8 +36,8 @@ export const EditPlaceModal: FC<EditPlaceModalProps> = ({
     budgetId: place.budgetId,
   };
 
-  const handleFormSubmit = (data: PlaceFormData) => {
-    onSavePlace({
+  const handleFormSubmit = async (data: PlaceFormData) => {
+    const updated: PlaceDTO = {
       ...place,
       title: data.title,
       emoji: data.emoji,
@@ -43,13 +45,27 @@ export const EditPlaceModal: FC<EditPlaceModalProps> = ({
       description: data.description,
       budgetId: data.budgetId,
       categoryIds: data.categoryIds || [],
-      
-    });
+    };
+    onSavePlace(updated);
+    if (placesApi) {
+      try {
+        await placesApi.updatePlace(updated);
+      } catch (e) {
+        console.error('Failed to update place in API', e);
+      }
+    }
     onClose();
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     onDeletePlace(place.id);
+    if (placesApi) {
+      try {
+        await placesApi.deletePlace(place.id);
+      } catch (e) {
+        console.error('Failed to delete place in API', e);
+      }
+    }
     onClose();
   };
 

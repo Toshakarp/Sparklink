@@ -6,6 +6,7 @@ import { SettingsSubViewHeader } from './SettingsSubViewHeader';
 import { AddPlaceModal, EditPlaceModal } from '@/features/place-management';
 import { Card, Button, IconButton } from '@/shared/ui';
 import { usePlaceStore } from '@/entities/place';
+import { useApi } from '@/app/providers/ApiProvider';
 import styles from './PlacesManagerView.module.scss';
 
 export interface PlacesManagerViewProps {
@@ -14,8 +15,17 @@ export interface PlacesManagerViewProps {
 
 export const PlacesManagerView: FC<PlacesManagerViewProps> = ({ onBack }) => {
   const { dateIdeas: places, dateTags: tags, budgetTiers, updatePlace, deletePlace } = usePlaceStore();
+  const { placesApi } = useApi();
   const [editingPlace, setEditingPlace] = useState<PlaceDTO | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  const handleDeletePlace = (id: string) => {
+    deletePlace(id);
+    if (placesApi) {
+      placesApi.deletePlace(id).catch((e) => console.error('Failed to delete place from DB', e));
+    }
+  };
+
   return (
     <div className={styles.container}>
       <SettingsSubViewHeader
@@ -56,7 +66,7 @@ export const PlacesManagerView: FC<PlacesManagerViewProps> = ({ onBack }) => {
               <IconButton
                 variant="danger"
                 size="sm"
-                onClick={() => deletePlace(place.id)}
+                onClick={() => handleDeletePlace(place.id)}
                 aria-label="Удалить"
                 title="Удалить"
                 icon={<Trash2 size={15} />}
@@ -72,7 +82,7 @@ export const PlacesManagerView: FC<PlacesManagerViewProps> = ({ onBack }) => {
         dateTags={tags}
         budgetTiers={budgetTiers}
         onSavePlace={updatePlace}
-        onDeletePlace={deletePlace}
+        onDeletePlace={handleDeletePlace}
       />
       <AddPlaceModal
         isOpen={isAddModalOpen}
