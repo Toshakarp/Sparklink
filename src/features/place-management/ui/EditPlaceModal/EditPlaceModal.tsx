@@ -1,8 +1,8 @@
+import type { PlaceDTO, BudgetTierDTO, DateCategoryDTO } from '@/shared/api/types/models';
 import type { FC } from 'react';
 import { Modal } from '@/shared/ui';
 import { PlaceForm, type PlaceFormData } from '../PlaceForm/PlaceForm';
-import type { PlaceDTO, BudgetTierDTO } from '@/shared/api/mock';
-import type { DateCategoryDTO } from '@/shared/api/core/IRepository';
+
 
 export interface EditPlaceModalProps {
   isOpen: boolean;
@@ -30,7 +30,7 @@ export const EditPlaceModal: FC<EditPlaceModalProps> = ({
     emoji: place.emoji || '☕️',
     address: place.address || '',
     description: place.description || '',
-    categoryIds: place.categoryIds || place.tagIds || [],
+    categoryIds: place.categoryIds || [],
     budgetId: place.budgetId,
   };
 
@@ -43,7 +43,7 @@ export const EditPlaceModal: FC<EditPlaceModalProps> = ({
       description: data.description,
       budgetId: data.budgetId,
       categoryIds: data.categoryIds || [],
-      tagIds: data.categoryIds || [],
+      
     });
     onClose();
   };

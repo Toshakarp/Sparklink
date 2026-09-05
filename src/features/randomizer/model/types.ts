@@ -1,4 +1,4 @@
-import type { PlaceDTO, BudgetTierDTO } from '@/shared/api/mock';
+import type { PlaceDTO, BudgetTierDTO } from '@/shared/api/types/models';
 
 export interface RandomizerWheelProps {
   ideas: PlaceDTO[];

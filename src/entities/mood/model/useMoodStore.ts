@@ -1,18 +1,19 @@
+import type { UserDTO } from '@/shared/api/types/models';
 import { create } from 'zustand';
-import type { MoodStatusDTO, UserDTO } from '@/shared/api/mock/types';
 import { DEFAULT_EMOTIONS } from '@/shared/config/constants';
 import { tgService } from '@/shared/lib/telegram/telegram';
+import type { MoodStatus } from './types';
 
 export interface MoodState {
-  myMood: MoodStatusDTO | null;
-  partnerMood: MoodStatusDTO | null;
+  myMood: MoodStatus | null;
+  partnerMood: MoodStatus | null;
   isLoading: boolean;
   fetchMoods: (currentUser?: UserDTO | null, partnerUser?: UserDTO | null) => void;
-  setMyMood: (mood: MoodStatusDTO | null) => void;
+  setMyMood: (mood: MoodStatus | null) => void;
 }
 
-// Чистый маппер из UserDTO в модель MoodStatusDTO
-export const mapUserToMood = (user: UserDTO | null): MoodStatusDTO | null => {
+// Чистый маппер из UserDTO в модель MoodStatus
+export const mapUserToMood = (user: UserDTO | null): MoodStatus | null => {
   if (!user) return null;
   const emotion = DEFAULT_EMOTIONS.find((e) => e.id === user.moodId) || DEFAULT_EMOTIONS[0];
   return {

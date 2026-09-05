@@ -1,10 +1,10 @@
+import type { PlaceDTO } from '@/shared/api/types/models';
 import { useState } from 'react';
 import type { FC } from 'react';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
 import { SettingsSubViewHeader } from './SettingsSubViewHeader';
 import { AddPlaceModal, EditPlaceModal } from '@/features/place-management';
 import { Card, Button, IconButton } from '@/shared/ui';
-import type { PlaceDTO } from '@/shared/api/mock/types';
 import { usePlaceStore } from '@/entities/place';
 import styles from './PlacesManagerView.module.scss';
 

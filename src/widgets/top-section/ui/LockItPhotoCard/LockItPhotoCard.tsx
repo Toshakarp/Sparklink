@@ -1,9 +1,9 @@
+import type { UserDTO } from '@/shared/api/types/models';
 import { useState } from 'react';
 import type { FC } from 'react';
 import { ImageOff, Plus } from 'lucide-react';
 import { Card } from '@/shared/ui';
 import { UserAvatar } from '@/entities/user';
-import type { UserDTO } from '@/shared/api/mock';
 import styles from './LockItPhotoCard.module.scss';
 
 export interface LockItPhotoCardProps {

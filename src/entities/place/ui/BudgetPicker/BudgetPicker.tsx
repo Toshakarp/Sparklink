@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { BudgetTag } from '@/entities/place';
-import type { BudgetTierDTO } from '@/shared/api';
+import type {  BudgetTierDTO  } from '@/shared/api/types/models';
 import styles from './BudgetPicker.module.scss';
 
 export interface BudgetPickerProps {
