@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { PlaceCard, usePlaceStore } from '@/entities/place';
 import { CategoryFilterModal } from '@/features/place-management';
 import { Button } from '@/shared/ui';
-import type { PlaceDTO } from '@/shared/api';
+import type {  PlaceDTO  } from '@/shared/api/types/models';
 import { usePlacesFilter } from '../../model/usePlacesFilter';
 import { PlacesSectionHeader } from '../PlacesSectionHeader/PlacesSectionHeader';
 import { getBudgetTier } from '@/entities/place';
@@ -73,7 +73,7 @@ export const PlacesSection: FC<PlacesSectionProps> = ({
           <div className={styles.grid}>
             {filteredPlaces.map((place) => {
               const budgetTier = getBudgetTier(place.budgetId, budgetTiers);
-              const placeTags = tags.filter((t) => place.tagIds?.includes(t.id));
+              const placeTags = tags.filter((t) => place.categoryIds?.includes(t.id));
               return (
                 <PlaceCard
                   key={place.id}

@@ -4,7 +4,7 @@ import { Plus, Pencil, Trash2 } from 'lucide-react';
 import { SettingsSubViewHeader } from './SettingsSubViewHeader';
 import { Card, Modal, Button, IconButton } from '@/shared/ui';
 import { DateCategoryForm, type DateCategoryFormData } from './DateCategoryForm';
-import type { TagDTO } from '@/shared/api/mock/types';
+import type { DateCategoryDTO } from '@/shared/api/types/models';
 import { usePlaceStore } from '@/entities/place';
 import styles from './DateCategoriesManagerView.module.scss';
 
@@ -15,7 +15,7 @@ export interface DateCategoriesManagerViewProps {
 export const DateCategoriesManagerView: FC<DateCategoriesManagerViewProps> = ({ onBack }) => {
   const { dateTags, addDateCategory, updateDateCategory, deleteDateCategory } = usePlaceStore();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [editingTag, setEditingTag] = useState<TagDTO | null>(null);
+  const [editingTag, setEditingTag] = useState<DateCategoryDTO | null>(null);
 
   const handleSaveAdd = (data: DateCategoryFormData) => {
     addDateCategory({

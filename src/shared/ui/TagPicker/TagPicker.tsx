@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { Tag } from '../Tag/Tag';
-import type { TagDTO } from '../../api/mock/types';
+import type {  TagDTO  } from '@/shared/api/types/models';
 
 export interface TagPickerProps {
   tags: TagDTO[];
@@ -19,8 +19,7 @@ export const TagPicker: FC<TagPickerProps> = ({ tags, selectedTagIds, onToggleTa
         return (
           <Tag
             key={tag.id}
-            title={tag.label}
-            emoji={tag.emoji}
+            label={tag.label}
             isActive={isSelected}
             onClick={readOnly || !onToggleTag ? undefined : () => onToggleTag(tag.id)}
           />

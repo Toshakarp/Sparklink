@@ -1,7 +1,7 @@
+import type { TagDTO, BudgetTierDTO } from '@/shared/api/types/models';
 import type { FC } from 'react';
 import { Modal, Tag, FormActions } from '@/shared/ui';
 import { BudgetPicker } from '@/entities';
-import type { TagDTO, BudgetTierDTO } from '@/shared/api/mock';
 import styles from './CategoryFilterModal.module.scss';
 
 export interface CategoryFilterModalProps {
@@ -51,8 +51,7 @@ export const CategoryFilterModal: FC<CategoryFilterModalProps> = ({
                 return (
                   <Tag
                     key={tag.id}
-                    title={tag.label}
-                    emoji={tag.emoji}
+                    label={tag.label}
                     isActive={isSelected}
                     onClick={() => onToggleTag(tag.id)}
                   />

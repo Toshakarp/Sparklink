@@ -1,9 +1,9 @@
+import type { BudgetTierDTO } from '@/shared/api/types/models';
 import type { FC } from 'react';
 import { Tag, type TagProps } from '@/shared/ui';
-import type { BudgetTierDTO } from '@/shared/api/mock';
 import styles from './BudgetTag.module.scss';
 
-export interface BudgetTagProps extends Omit<TagProps, 'title' | 'emoji'> {
+export interface BudgetTagProps extends Omit<TagProps, 'label' | 'emoji'> {
   budgetTier: BudgetTierDTO;
 }
 
@@ -13,7 +13,7 @@ export const BudgetTag: FC<BudgetTagProps> = ({
   className = '',
   ...props
 }) => {
-  const levelClass = styles[`level${budgetTier.colorLevel}`];
+  const levelClass = styles[`level${budgetTier.level}`];
   
   const classes = [
     styles.budgetTag,
@@ -24,8 +24,7 @@ export const BudgetTag: FC<BudgetTagProps> = ({
 
   return (
     <Tag
-      title={budgetTier.name}
-      emoji={budgetTier.emoji}
+      label={budgetTier.label}
       className={classes}
       isActive={isActive}
       {...props}

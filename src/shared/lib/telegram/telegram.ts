@@ -8,20 +8,14 @@ import {
   mockTelegramEnv 
 } from '@tma.js/sdk';
 
-export interface TelegramUser {
-  id: number;
-  first_name: string;
-  last_name?: string;
-  username?: string;
-  language_code?: string;
-  photo_url?: string;
-}
+import type { ITelegramPort, TelegramUser } from './ITelegramPort';
+export type { TelegramUser };
 
 export const mockTelegramUser: TelegramUser = {
-  id: 10001,
-  first_name: 'Алекс',
-  last_name: 'Иванов',
-  username: 'alex_dev',
+  id: '10001',
+  first_name: 'dev',
+  last_name: 'devovich',
+  username: 'devvv',
   language_code: 'ru',
   photo_url: undefined,
 };
@@ -60,7 +54,7 @@ export function initializeTelegram(): void {
   }
 }
 
-class TelegramService {
+export class TelegramAdapter implements ITelegramPort {
   public async isAvailable(): Promise<boolean> {
     try {
       return await isTMA();
@@ -102,7 +96,7 @@ class TelegramService {
       const rawUser = (window as any).Telegram?.WebApp?.initDataUnsafe?.user;
       if (rawUser) {
         return {
-          id: rawUser.id,
+          id: String(rawUser.id),
           first_name: rawUser.first_name,
           last_name: rawUser.last_name,
           username: rawUser.username,
@@ -114,7 +108,7 @@ class TelegramService {
       const user = initData.user();
       if (user) {
         return {
-          id: user.id,
+          id: String(user.id),
           first_name: (user as any).firstName || (user as any).first_name,
           last_name: (user as any).lastName || (user as any).last_name,
           username: user.username,
@@ -144,6 +138,32 @@ class TelegramService {
     }
   }
 
+  public openTelegramLink(url: string): void {
+    try {
+      if (typeof window !== 'undefined' && (window as any).Telegram?.WebApp?.openTelegramLink) {
+        (window as any).Telegram.WebApp.openTelegramLink(url);
+        return;
+      }
+      window.open(url, '_blank');
+    } catch {
+      window.open(url, '_blank');
+    }
+  }
+
+  public getStartParam(): string | null {
+    try {
+      const rawInitData = this.getInitData();
+      if (rawInitData) {
+        const params = new URLSearchParams(rawInitData);
+        const param = params.get('start_param');
+        if (param) return param;
+      }
+      return (window as any).Telegram?.WebApp?.initDataUnsafe?.start_param || null;
+    } catch {
+      return null;
+    }
+  }
+
   public haptic(type: 'light' | 'medium' | 'heavy' | 'success' | 'warning' | 'error'): void {
     try {
       if (!hapticFeedback.isSupported()) return;
@@ -159,4 +179,4 @@ class TelegramService {
   }
 }
 
-export const tgService = new TelegramService();
+export const tgService = new TelegramAdapter();

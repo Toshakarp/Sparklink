@@ -1,4 +1,4 @@
-import type { BudgetTierDTO } from '@/shared/api/mock/types';
+import type { BudgetTierDTO } from '@/shared/api/types/models';
 
 export function getBudgetTier(
   idOrBudgetId: string | undefined,

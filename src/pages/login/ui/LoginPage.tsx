@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { FC } from 'react';
 import { Heart, UserPlus, CalendarHeart, Camera, Sparkles } from 'lucide-react';
 import { Button } from '@/shared/ui';
-import { DemoAuthButton } from '@/features/auth-by-demo';
+import { DemoAuthButton } from '@/features/auth';
 import { LinkPartnerModal } from '@/features/link-partner';
 import { useUserStore } from '@/entities/user';
 import styles from './LoginPage.module.scss';

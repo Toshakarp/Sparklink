@@ -1,7 +1,7 @@
 import type { FC } from 'react';
+import type { EmotionDTO } from '@/shared/api/types/models';
 import { Modal, Button, Tag, Slider } from '@/shared/ui';
 import { ENERGY_LEVEL_MARKS, ENERGY_STEP, DEFAULT_EMOTIONS } from '@/shared/config/constants';
-import type { EmotionDTO } from '@/shared/api/mock/types';
 import { useMoodTracking } from '../../model/useMoodTracking';
 import styles from './MoodSelectorModal.module.scss';
 
@@ -19,7 +19,7 @@ export const MoodSelectorModal: FC<MoodSelectorModalProps> = ({
   onClose,
   currentEmotionId,
   currentEnergyLevel = 50,
-  emotions = DEFAULT_EMOTIONS as EmotionDTO[],
+  emotions = DEFAULT_EMOTIONS,
   onSaveMood,
 }) => {
   const {
@@ -48,7 +48,7 @@ export const MoodSelectorModal: FC<MoodSelectorModalProps> = ({
             {emotions.map((emotion) => (
               <Tag
                 key={emotion.id}
-                title={emotion.title}
+                label={emotion.title}
                 emoji={emotion.emoji}
                 isActive={selectedEmotionId === emotion.id}
                 onClick={() => handleSelectEmotion(emotion.id)}

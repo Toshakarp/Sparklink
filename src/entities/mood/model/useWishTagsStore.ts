@@ -1,13 +1,20 @@
 import { create } from 'zustand';
-import type { TagDTO } from '@/shared/api/mock/types';
-import { tgService } from '@/shared/lib/telegram/telegram';
-import { useInitStore } from '@/app/model/useInitStore';
+import type { TagDTO } from '@/shared/api/types/models';
 
-interface WishTagsState {
+import { tgService } from '@/shared/lib/telegram/telegram';
+
+export interface WishTagsState {
   moodTags: TagDTO[];
+  mySelectedTagIds: string[];
+  partnerSelectedTagIds: string[];
   isLoading: boolean;
-  fetchTags: (pairId?: string) => Promise<void>;
-  toggleMoodTag: (tagId: string) => void;
+  
+  setTags: (tags: TagDTO[]) => void;
+  setSelectedTags: (myTagIds: string[], partnerTagIds: string[]) => void;
+  setPartnerSelectedTags: (partnerTagIds: string[]) => void;
+  toggleMoodTag: (id: string) => void;
+  markPartnerTag: (id: string) => void;
+  
   addMoodTag: (tag: Omit<TagDTO, 'id'>) => void;
   updateMoodTag: (tag: TagDTO) => void;
   deleteMoodTag: (id: string) => void;
@@ -15,63 +22,57 @@ interface WishTagsState {
 
 export const useWishTagsStore = create<WishTagsState>((set) => ({
   moodTags: [],
+  mySelectedTagIds: [],
+  partnerSelectedTagIds: [],
   isLoading: false,
-  
-  fetchTags: async (pairId?: string) => {
-    set({ isLoading: true });
-    try {
-      const api = useInitStore.getState().api;
-      if (!api || !pairId) {
-         set({ isLoading: false });
-         return;
-      }
-      
-      const data = await api.getPairData(pairId);
-      set({ moodTags: data.moodTags, isLoading: false });
-    } catch {
-      set({ isLoading: false });
-    }
-  },
-  
-  toggleMoodTag: (tagId) => {
-    set((state) => ({
-      moodTags: state.moodTags.map((tag) => {
-        if (tag.id === tagId) {
-          const isSelected = !tag.selectedByMe;
-          const markedBy = tag.markedBy || [];
-          const updatedMarkedBy = isSelected
-            ? [...markedBy.filter((id) => id !== 'user'), 'user']
-            : markedBy.filter((id) => id !== 'user');
-          return { ...tag, selectedByMe: isSelected, markedBy: updatedMarkedBy };
-        }
-        return tag;
-      })
-    }));
+
+  setTags: (tags) => set({ moodTags: tags }),
+  setSelectedTags: (myTagIds, partnerTagIds) => set({
+    mySelectedTagIds: myTagIds,
+    partnerSelectedTagIds: partnerTagIds,
+  }),
+  setPartnerSelectedTags: (partnerTagIds) => set({ partnerSelectedTagIds: partnerTagIds }),
+
+  toggleMoodTag: (id: string) => {
+    set((state) => {
+      const isSelected = state.mySelectedTagIds.includes(id);
+      return {
+        mySelectedTagIds: isSelected
+          ? state.mySelectedTagIds.filter(t => t !== id)
+          : [...state.mySelectedTagIds, id]
+      };
+    });
     tgService.haptic('light');
   },
-  
-  addMoodTag: (tag) => {
-    const newTag: TagDTO = { 
-      ...tag, 
-      id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `tag-${Date.now()}`, 
-      type: 'mood', 
-      markedBy: [], 
-      selectedByMe: false, 
-      selectedByPartner: false 
-    };
-    set((state) => ({ moodTags: [...state.moodTags, newTag] }));
+
+  markPartnerTag: (id: string) => {
+    set((state) => {
+      const isSelected = state.partnerSelectedTagIds.includes(id);
+      return {
+        partnerSelectedTagIds: isSelected
+          ? state.partnerSelectedTagIds.filter(t => t !== id)
+          : [...state.partnerSelectedTagIds, id]
+      };
+    });
     tgService.haptic('success');
   },
-  
-  updateMoodTag: (updatedTag) => {
-    set((state) => ({
-      moodTags: state.moodTags.map((t) => (t.id === updatedTag.id ? updatedTag : t)),
-    }));
-    tgService.haptic('light');
+
+  addMoodTag: (newTag) => {
+    const tag: TagDTO = {
+      ...newTag,
+      id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `tag-${Date.now()}`
+    };
+    set((state) => ({ moodTags: [...state.moodTags, tag] }));
+    tgService.haptic('success');
   },
-  
+
+  updateMoodTag: (updatedTag) => {
+    set((state) => ({ moodTags: state.moodTags.map(t => t.id === updatedTag.id ? updatedTag : t) }));
+    tgService.haptic('success');
+  },
+
   deleteMoodTag: (id) => {
-    set((state) => ({ moodTags: state.moodTags.filter((t) => t.id !== id) }));
+    set((state) => ({ moodTags: state.moodTags.filter(t => t.id !== id) }));
     tgService.haptic('medium');
   }
 }));

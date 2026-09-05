@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import type { FC } from 'react';
 import { SettingsSubViewHeader } from './SettingsSubViewHeader';
 import { useUserStore } from '@/entities/user';
+import { Button } from '@/shared/ui';
 import styles from './AppearanceManagerView.module.scss';
 
 const THEME_COLORS = [
@@ -22,7 +24,19 @@ export const AppearanceManagerView: FC<AppearanceManagerViewProps> = ({
   onBack,
 }) => {
   const { currentUser, updateThemeColor } = useUserStore();
-  const appearance = currentUser?.themeColor || '#FF4B4B';
+  const [selectedColor, setSelectedColor] = useState(currentUser?.themeColor || '#FF4B4B');
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSave = async () => {
+    if (!currentUser) return;
+    setIsSaving(true);
+    try {
+      await updateThemeColor(selectedColor);
+      onBack();
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <div className={styles.container}>
@@ -36,10 +50,10 @@ export const AppearanceManagerView: FC<AppearanceManagerViewProps> = ({
                 key={color.value}
                 type="button"
                 className={styles.colorBtn}
-                onClick={() => updateThemeColor(color.value)}
+                onClick={() => setSelectedColor(color.value)}
               >
                 <div 
-                  className={`${styles.colorDot} ${appearance === color.value ? styles.activeColor : ''}`}
+                  className={`${styles.colorDot} ${selectedColor === color.value ? styles.activeColor : ''}`}
                   style={{ backgroundColor: color.value }}
                 />
                 <span className={styles.colorName}>{color.name}</span>
@@ -47,6 +61,17 @@ export const AppearanceManagerView: FC<AppearanceManagerViewProps> = ({
             ))}
           </div>
         </div>
+      </div>
+
+      <div >
+        <Button
+          fullWidth
+          variant="primary"
+          onClick={handleSave}
+          disabled={selectedColor === currentUser?.themeColor || isSaving}
+        >
+          {isSaving ? 'Сохранение...' : 'Сохранить изменения'}
+        </Button>
       </div>
     </div>
   );

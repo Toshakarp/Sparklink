@@ -4,14 +4,14 @@ import { Check } from 'lucide-react';
 import styles from './Tag.module.scss';
 
 export interface TagProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  title: string;
+  label: string;
   emoji?: string;
   isActive?: boolean;
   addonRight?: ReactNode;
 }
 
 export const Tag: FC<TagProps> = ({
-  title,
+  label,
   emoji,
   isActive = false,
   addonRight,
@@ -44,7 +44,7 @@ export const Tag: FC<TagProps> = ({
       {...props}
     >
       {emoji && <span className={styles.emoji}>{emoji}</span>}
-      <span className={styles.title}>{title}</span>
+      <span className={styles.title}>{label}</span>
       {rightElement}
     </button>
   );
