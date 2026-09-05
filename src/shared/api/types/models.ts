@@ -66,3 +66,10 @@ export interface UserMoodTagDTO {
   pairId: string;
   selectedAt?: string;
 }
+
+export interface EmotionDTO {
+  id: string;
+  title: string;
+  emoji: string;
+  type: 'positive' | 'difficult' | 'neutral' | string;
+}

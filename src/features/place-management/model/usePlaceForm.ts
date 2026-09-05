@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import type { BudgetTierDTO } from '@/shared/api/types/models';
+import { useState, useCallback } from 'react';
 import type { FormEvent } from 'react';
-import type { BudgetTierDTO } from '@/shared/api/mock';
 
 export interface PlaceFormData {
   title: string;
@@ -22,6 +22,7 @@ export const usePlaceForm = ({
   budgetTiers = [],
   onSubmit,
 }: UsePlaceFormOptions) => {
+  const [prevInitialData, setPrevInitialData] = useState(initialData);
   const [emoji, setEmoji] = useState(initialData?.emoji || '☕️');
   const [title, setTitle] = useState(initialData?.title || '');
   const [address, setAddress] = useState(initialData?.address || '');
@@ -33,7 +34,8 @@ export const usePlaceForm = ({
     initialData?.budgetId || budgetTiers[0]?.id
   );
 
-  useEffect(() => {
+  if (initialData !== prevInitialData) {
+    setPrevInitialData(initialData);
     if (initialData) {
       if (initialData.emoji) setEmoji(initialData.emoji);
       if (initialData.title) setTitle(initialData.title);
@@ -42,7 +44,7 @@ export const usePlaceForm = ({
       if (initialData.tagIds) setSelectedTagIds(initialData.tagIds);
       if (initialData.budgetId) setSelectedBudgetId(initialData.budgetId);
     }
-  }, [initialData]);
+  }
 
   const handleToggleTag = useCallback((tagId: string) => {
     setSelectedTagIds((prev) =>

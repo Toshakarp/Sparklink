@@ -4,6 +4,7 @@ import { Card, TagList } from '@/shared/ui';
 import { BudgetTag } from '../BudgetTag/BudgetTag';
 import { PlaceLikeButton } from '../PlaceLikeButton/PlaceLikeButton';
 import { usePlaceStore } from '../../model/usePlaceStore';
+import { getBudgetTier } from '../../lib/budgetHelpers';
 import styles from './PlaceCard.module.scss';
 
 export interface PlaceCardProps {
@@ -16,11 +17,17 @@ export interface PlaceCardProps {
 export const PlaceCard: FC<PlaceCardProps> = ({
   place,
   budgetTier,
-  tags = [],
+  tags,
   onClick,
 }) => {
   const isLikedByMe = usePlaceStore((state) => state.likedPlaceIds.includes(place.id));
   const incrementCount = usePlaceStore((state) => state.incrementCount);
+  const dateTags = usePlaceStore((state) => state.dateTags);
+  const budgetTiers = usePlaceStore((state) => state.budgetTiers);
+
+  const resolvedBudgetTier = budgetTier || getBudgetTier(place.budgetId, budgetTiers);
+  const resolvedTags = tags !== undefined ? tags : dateTags.filter((t) => place.categoryIds?.includes(t.id));
+
   const clickCount = place.clickCount || 0;
 
   const handleLike = (e: MouseEvent<HTMLButtonElement>) => {
@@ -56,10 +63,10 @@ export const PlaceCard: FC<PlaceCardProps> = ({
         </div>
       </div>
 
-      {(budgetTier || (tags && tags.length > 0)) && (
+      {(resolvedBudgetTier || (resolvedTags && resolvedTags.length > 0)) && (
         <div className={styles.badgesRow}>
-          {budgetTier && <BudgetTag budgetTier={budgetTier} />}
-          {tags && tags.length > 0 && <TagList tags={tags} />}
+          {resolvedBudgetTier && <BudgetTag budgetTier={resolvedBudgetTier} />}
+          {resolvedTags && resolvedTags.length > 0 && <TagList tags={resolvedTags} />}
         </div>
       )}
     </Card>
