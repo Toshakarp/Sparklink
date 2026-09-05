@@ -11,12 +11,12 @@ export interface PlaceState {
   isLoading: boolean;
   
   setPlacesData: (places: PlaceDTO[], tags: DateCategoryDTO[], tiers: BudgetTierDTO[]) => void;
-  addPlace: (place: CreatePlaceDTO) => void;
+  addPlace: (place: CreatePlaceDTO | PlaceDTO) => void;
   updatePlace: (place: PlaceDTO) => void;
   deletePlace: (id: string) => void;
   incrementCount: (id: string) => void;
   
-  addDateCategory: (tag: Omit<DateCategoryDTO, 'id' | 'pair_id'>) => void;
+  addDateCategory: (tag: (Omit<DateCategoryDTO, 'id' | 'pair_id'> & { id?: string; pair_id?: string })) => void;
   updateDateCategory: (tag: DateCategoryDTO) => void;
   deleteDateCategory: (id: string) => void;
   
@@ -33,17 +33,18 @@ export const usePlaceStore = create<PlaceState>((set) => ({
   setPlacesData: (places, tags, tiers) => set({ dateIdeas: places, dateTags: tags, budgetTiers: tiers, isLoading: false }),
 
   addPlace: (newPlace) => {
+    const p = newPlace as Partial<PlaceDTO>;
     const place: PlaceDTO = {
-      id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `place-${Date.now()}`,
+      id: p.id || (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : 'temp-id'),
       title: newPlace.title,
       emoji: newPlace.emoji || '🍿',
       address: newPlace.address,
       description: newPlace.description,
       categoryIds: newPlace.categoryIds || [],
       budgetId: newPlace.budgetId || 'budget',
-      clickCount: 0,
-      lastClickedAt: null,
-      createdAt: new Date().toISOString(),
+      clickCount: p.clickCount || 0,
+      lastClickedAt: p.lastClickedAt || null,
+      createdAt: p.createdAt || new Date().toISOString(),
     };
     set((state) => ({ dateIdeas: [place, ...state.dateIdeas] }));
     tgService.haptic('success');
@@ -76,10 +77,11 @@ export const usePlaceStore = create<PlaceState>((set) => ({
   },
   
   addDateCategory: (tag) => {
+    const t = tag as Partial<DateCategoryDTO>;
     const newCategory: DateCategoryDTO = { 
        ...tag, 
-       id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `cat-${Date.now()}`,
-      pair_id: 'local'
+       id: t.id || (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : 'cat-temp'),
+      pair_id: t.pair_id || 'local'
     };
     set((state) => ({ dateTags: [...state.dateTags, newCategory] }));
     tgService.haptic('success');

@@ -15,7 +15,7 @@ export interface WishTagsState {
   toggleMoodTag: (id: string) => void;
   markPartnerTag: (id: string) => void;
   
-  addMoodTag: (tag: Omit<TagDTO, 'id'>) => void;
+  addMoodTag: (tag: Omit<TagDTO, 'id'> & { id?: string }) => void;
   updateMoodTag: (tag: TagDTO) => void;
   deleteMoodTag: (id: string) => void;
 }
@@ -60,7 +60,7 @@ export const useWishTagsStore = create<WishTagsState>((set) => ({
   addMoodTag: (newTag) => {
     const tag: TagDTO = {
       ...newTag,
-      id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `tag-${Date.now()}`
+      id: newTag.id || (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : 'tag-temp')
     };
     set((state) => ({ moodTags: [...state.moodTags, tag] }));
     tgService.haptic('success');
