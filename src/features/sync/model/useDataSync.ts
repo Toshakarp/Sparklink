@@ -69,10 +69,40 @@ export const useDataSync = () => {
 
   // 2. Realtime Subscription via Supabase postgres_changes
   useEffect(() => {
-    if (!currentUser?.pairId || !currentUser?.id) return;
-    const pairId = currentUser.pairId;
+    if (!currentUser?.id) return;
     const userId = currentUser.id;
+    
+    // If the user does not have a pairId yet, we just subscribe to their own row
+    // to detect when a pairId is set (meaning a partner linked with them)
+    if (!currentUser.pairId) {
+      const channel = supabase
+        .channel(`user-sync-${userId}`)
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'users',
+            filter: `id=eq.${userId}`,
+          },
+          (payload) => {
+            const newRecord = payload.new as { pair_id?: string | null };
+            if (newRecord?.pair_id) {
+              const freshUser = useUserStore.getState().currentUser;
+              if (freshUser) {
+                useUserStore.getState().setCurrentUser({ ...freshUser, pairId: newRecord.pair_id });
+              }
+            }
+          }
+        )
+        .subscribe();
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }
 
+    // If we DO have a pairId, subscribe to pair data
+    const pairId = currentUser.pairId;
     const channel = supabase
       .channel(`pair-sync-${pairId}`)
       .on(
@@ -119,7 +149,7 @@ export const useDataSync = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [currentUser?.pairId, currentUser?.id, resyncPlaces, resyncPartner, resyncMoodTags]);
+  }, [currentUser?.pairId, currentUser?.id, currentUser, resyncPlaces, resyncPartner, resyncMoodTags]);
 
   // 3. visibility resync
   useEffect(() => {
