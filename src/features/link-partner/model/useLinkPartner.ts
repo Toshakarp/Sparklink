@@ -3,6 +3,7 @@ import { useUserStore } from '@/entities/user';
 import { tgService } from '@/shared/lib/telegram/telegram';
 
 
+
 export interface UseLinkPartnerReturn {
   inviteUrl: string;
   inviteCode: string;
@@ -14,9 +15,10 @@ export interface UseLinkPartnerReturn {
 }
 
 export const useLinkPartner = (isOpen: boolean): UseLinkPartnerReturn => {
+  const botname = import.meta.env.VITE_TELEGRAM_BOT_USERNAME;
   const currentUser = useUserStore((state) => state.currentUser);
   const inviteUrl = currentUser?.id
-    ? `https://t.me/sparklinkTMA_bot/app?startapp=invite_${currentUser.id}`
+    ? `https://t.me/${botname}/app?startapp=invite_${currentUser.id}`
     : '';
 
   const [isLoading] = useState(false);
