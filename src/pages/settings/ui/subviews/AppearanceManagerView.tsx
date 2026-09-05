@@ -61,7 +61,7 @@ export const AppearanceManagerView: FC<AppearanceManagerViewProps> = ({
               >
                 <div 
                   className={`${styles.colorDot} ${selectedColor === color.value ? styles.activeColor : ''}`}
-                  style={{ '--dot-color': color.value } as React.CSSProperties}
+                  style={{ backgroundColor: color.value }}
                 />
                 <span className={styles.colorName}>{color.name}</span>
               </button>

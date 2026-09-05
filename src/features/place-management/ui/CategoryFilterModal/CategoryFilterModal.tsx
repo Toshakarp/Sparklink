@@ -1,6 +1,6 @@
 import type { TagDTO, BudgetTierDTO } from '@/shared/api/types/models';
 import type { FC } from 'react';
-import { Modal, Tag, FormActions } from '@/shared/ui';
+import { Modal, TagPicker, FormActions } from '@/shared/ui';
 import { BudgetPicker } from '@/entities';
 import styles from './CategoryFilterModal.module.scss';
 
@@ -46,17 +46,11 @@ export const CategoryFilterModal: FC<CategoryFilterModalProps> = ({
           <div className={styles.section}>
             <div className={styles.sectionTitle}>Категории свиданий</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-              {currentTags.map((tag) => {
-                const isSelected = selectedTagIds.includes(tag.id);
-                return (
-                  <Tag
-                    key={tag.id}
-                    label={tag.label}
-                    isActive={isSelected}
-                    onClick={() => onToggleTag(tag.id)}
-                  />
-                );
-              })}
+              <TagPicker 
+                tags={currentTags}
+                selectedTagIds={selectedTagIds}
+                onToggleTag={onToggleTag}
+              />
             </div>
           </div>
         )}

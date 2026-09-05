@@ -25,20 +25,11 @@ export const createSupabasePairApi = (): IPairApi => ({
   },
 
   getPairData: async (pairId) => {
-    let [categoriesRes, tagsRes, budgetRes] = await Promise.all([
+    const [categoriesRes, tagsRes, budgetRes] = await Promise.all([
       supabase.from(SUPABASE_TABLES.PLACE_CATEGORIES).select('*').eq('pair_id', pairId),
       supabase.from(SUPABASE_TABLES.MOOD_TAGS).select('*').eq('pair_id', pairId),
       supabase.from(SUPABASE_TABLES.BUDGET_TIERS).select('*').eq('pair_id', pairId),
-    ]);
-
-    if (!budgetRes.data || budgetRes.data.length === 0 || !categoriesRes.data || categoriesRes.data.length === 0) {
-      await seedPairInitialData(pairId);
-      [categoriesRes, tagsRes, budgetRes] = await Promise.all([
-        supabase.from(SUPABASE_TABLES.PLACE_CATEGORIES).select('*').eq('pair_id', pairId),
-        supabase.from(SUPABASE_TABLES.MOOD_TAGS).select('*').eq('pair_id', pairId),
-        supabase.from(SUPABASE_TABLES.BUDGET_TIERS).select('*').eq('pair_id', pairId),
-      ]);
-    }
+   ]);
 
     return {
       placeCategories: (categoriesRes.data || []).map(mapCategoryFromDb),

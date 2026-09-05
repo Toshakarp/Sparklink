@@ -19,6 +19,7 @@ export const TagPicker: FC<TagPickerProps> = ({ tags, selectedTagIds, onToggleTa
         return (
           <Tag
             key={tag.id}
+            emoji={tag.emoji}
             label={tag.label}
             isActive={isSelected}
             onClick={readOnly || !onToggleTag ? undefined : () => onToggleTag(tag.id)}
