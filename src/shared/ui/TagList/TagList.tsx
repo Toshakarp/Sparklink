@@ -19,7 +19,7 @@ export const TagList: FC<TagListProps> = ({ tags, className = '', onTagClick, ac
         <Tag
           key={tag.id}
           emoji={tag.emoji}
-          title={tag.label}
+          label={tag.label}
           isActive={activeTagId === tag.id}
           onClick={onTagClick ? () => onTagClick(tag) : undefined}
         />

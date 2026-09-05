@@ -29,7 +29,7 @@ export const TagSelector: FC<TagSelectorProps> = ({
           <MoodTag
             key={tag.id}
             emoji={tag.emoji || ''}
-            title={tag.label}
+            label={tag.label}
             selectedByMe={mySelectedTagIds.includes(tag.id)}
             selectedByPartner={partnerSelectedTagIds.includes(tag.id)}
             myColor={currentUser?.themeColor || '#ff2d55'}
