@@ -1,99 +1,117 @@
-import { useEffect } from 'react';
-import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
+import { useEffect, useCallback } from 'react';
 import { useApi } from '@/app/providers/ApiProvider';
 import { useUserStore } from '@/entities/user';
 import { usePairStore } from '@/entities/pair';
 import { usePlaceStore } from '@/entities/place';
 import { useWishTagsStore } from '@/entities/mood';
-import { supabase } from '@/shared/api/supabase/client';
-import { SUPABASE_TABLES } from '@/shared/api/supabase/constants/tables';
-import { mapUserFromDb, type SupabaseUserRow, type SupabaseUserMoodTagRow } from '@/shared/api/supabase/mappers';
 import { useAppInit } from '@/features/auth';
+import { supabase } from '@/shared/api/supabase/client';
 
 export const useDataSync = () => {
   const { status } = useAppInit();
   const { placesApi, pairApi } = useApi();
   const isAuth = useUserStore((state) => state.isAuth);
   const currentUser = useUserStore((state) => state.currentUser);
-  
+
+  const resyncMoodTags = useCallback((pairId: string, currentUserId: string) => {
+    if (!pairApi) return;
+    pairApi.getSelectedMoodTags(pairId).then((selectedTags) => {
+      const partnerIds = selectedTags.filter((t) => t.userId !== currentUserId).map((t) => t.tagId);
+      useWishTagsStore.getState().setPartnerSelectedTags(partnerIds);
+      usePairStore.setState({ lastSyncedAt: new Date().toISOString() });
+    }).catch((err) => console.error('[Sync] Mood tags resync error:', err));
+  }, [pairApi]);
+
+  const resyncPartner = useCallback((pairId: string, currentUserId: string) => {
+    if (!pairApi) return;
+    pairApi.getPartner(pairId, currentUserId).then((partner) => {
+      if (partner) {
+        usePairStore.getState().setPartnerUser(partner);
+        usePairStore.setState({ lastSyncedAt: new Date().toISOString() });
+      }
+    }).catch((err) => console.error('[Sync] Partner resync error:', err));
+  }, [pairApi]);
+
+  const resyncPlaces = useCallback((pairId: string) => {
+    if (!placesApi) return;
+    placesApi.getPlaces(pairId).then((places) => {
+      const currentCategories = usePlaceStore.getState().dateTags;
+      const currentBudgets = usePlaceStore.getState().budgetTiers;
+      usePlaceStore.getState().setPlacesData(places, currentCategories, currentBudgets);
+      usePairStore.setState({ lastSyncedAt: new Date().toISOString() });
+    }).catch((err) => console.error('[Sync] Places resync error:', err));
+  }, [placesApi]);
+
   // 1. Initial Data Fetching
   useEffect(() => {
     if ((status === 'telegram_ready' || status === 'browser_mock') && isAuth && currentUser?.pairId && pairApi && placesApi) {
       const pairId = currentUser.pairId;
       const userId = currentUser.id;
-      
+
       Promise.all([
         pairApi.getPartner(pairId, userId),
         placesApi.getPlaces(pairId),
         pairApi.getPairData(pairId),
-        pairApi.getSelectedMoodTags(pairId)
+        pairApi.getSelectedMoodTags(pairId),
       ]).then(([partner, places, data, selectedTags]) => {
         usePairStore.getState().setPartnerUser(partner);
         usePlaceStore.getState().setPlacesData(places, data.placeCategories, data.budgetTiers);
         useWishTagsStore.getState().setTags(data.moodTags);
-        const myIds = selectedTags.filter(t => t.userId === userId).map(t => t.tagId);
-        const partnerIds = selectedTags.filter(t => t.userId !== userId).map(t => t.tagId);
+        const myIds = selectedTags.filter((t) => t.userId === userId).map((t) => t.tagId);
+        const partnerIds = selectedTags.filter((t) => t.userId !== userId).map((t) => t.tagId);
         useWishTagsStore.getState().setSelectedTags(myIds, partnerIds);
-      }).catch(err => {
+        usePairStore.setState({ lastSyncedAt: new Date().toISOString() });
+      }).catch((err) => {
         console.error('Data Sync Error:', err);
       });
     }
   }, [status, isAuth, currentUser?.pairId, currentUser?.id, pairApi, placesApi]);
 
-  // 2. Realtime Synchronization
+  // 2. Realtime Subscription via Supabase postgres_changes
   useEffect(() => {
-    if (status !== 'telegram_ready' || !currentUser?.pairId) return;
-    
+    if (!currentUser?.pairId || !currentUser?.id) return;
     const pairId = currentUser.pairId;
     const userId = currentUser.id;
 
-    const channel = supabase.channel(`pair-${pairId}`)
+    const channel = supabase
+      .channel(`pair-sync-${pairId}`)
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: SUPABASE_TABLES.USER_MOOD_TAGS, filter: `pair_id=eq.${pairId}` },
-        (payload: RealtimePostgresChangesPayload<SupabaseUserMoodTagRow>) => {
-          const { eventType, new: newRecord, old: oldRecord } = payload;
-          if (eventType === 'INSERT' && newRecord) {
-            if (newRecord.user_id !== userId) {
-              useWishTagsStore.getState().markPartnerTag(newRecord.tag_id);
-            }
-          } else if (eventType === 'DELETE' && oldRecord && 'tag_id' in oldRecord) {
-            const partnerTagRecord = oldRecord as Partial<SupabaseUserMoodTagRow>;
-            if (partnerTagRecord.user_id !== userId && partnerTagRecord.tag_id) {
-              const currentPartnerTags = useWishTagsStore.getState().partnerSelectedTagIds;
-              useWishTagsStore.getState().setPartnerSelectedTags(
-                currentPartnerTags.filter((id: string) => id !== partnerTagRecord.tag_id)
-              );
-            }
-          }
-        }
-      )
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: SUPABASE_TABLES.USERS, filter: `pair_id=eq.${pairId}` },
-        (payload: RealtimePostgresChangesPayload<SupabaseUserRow>) => {
-          // If the changed user is the partner, update the partner store
-          const newData = payload.new;
-          if (newData && 'id' in newData && newData.id !== userId) {
-            const mappedPartner = mapUserFromDb(newData as SupabaseUserRow);
-            usePairStore.getState().setPartnerUser(mappedPartner);
-          }
-        }
-      )
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: SUPABASE_TABLES.PLACES, filter: `pair_id=eq.${pairId}` },
+        {
+          event: '*',
+          schema: 'public',
+          table: 'places',
+          filter: `pair_id=eq.${pairId}`,
+        },
         () => {
-           // When a place is added/updated/deleted, just refetch places
-           // This ensures categories and tags are mapped correctly without complex logic
-           if (placesApi) {
-             placesApi.getPlaces(pairId).then(places => {
-               // We only update places, keeping categories and budgets intact
-               const currentCategories = usePlaceStore.getState().dateTags;
-               const currentBudgets = usePlaceStore.getState().budgetTiers;
-               usePlaceStore.getState().setPlacesData(places, currentCategories, currentBudgets);
-             });
-           }
+          resyncPlaces(pairId);
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'users',
+          filter: `pair_id=eq.${pairId}`,
+        },
+        (payload) => {
+          const record = (payload.new || payload.old) as { id?: string } | undefined;
+          if (record?.id !== userId) {
+            resyncPartner(pairId, userId);
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'user_mood_tags',
+          filter: `pair_id=eq.${pairId}`,
+        },
+        () => {
+          resyncMoodTags(pairId, userId);
         }
       )
       .subscribe();
@@ -101,7 +119,30 @@ export const useDataSync = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [status, currentUser?.pairId, currentUser?.id, placesApi]);
-  
+  }, [currentUser?.pairId, currentUser?.id, resyncPlaces, resyncPartner, resyncMoodTags]);
+
+  // 3. visibility resync
+  useEffect(() => {
+    if (!currentUser?.pairId || !currentUser?.id) return;
+    const pairId = currentUser.pairId;
+    const userId = currentUser.id;
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        resyncMoodTags(pairId, userId);
+        resyncPartner(pairId, userId);
+        resyncPlaces(pairId);
+      }
+    };
+
+    window.addEventListener('focus', handleVisibilityChange);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('focus', handleVisibilityChange);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [currentUser?.pairId, currentUser?.id, resyncMoodTags, resyncPartner, resyncPlaces]);
+
   return { status };
 };
