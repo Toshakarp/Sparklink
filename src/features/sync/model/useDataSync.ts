@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 import { useApi } from '@/app/providers/ApiProvider';
 import { useUserStore } from '@/entities/user';
 import { usePairStore } from '@/entities/pair';
@@ -6,7 +7,7 @@ import { usePlaceStore } from '@/entities/place';
 import { useWishTagsStore } from '@/entities/mood';
 import { supabase } from '@/shared/api/supabase/client';
 import { SUPABASE_TABLES } from '@/shared/api/supabase/constants/tables';
-import { mapUserFromDb } from '@/shared/api/supabase/mappers';
+import { mapUserFromDb, type SupabaseUserRow, type SupabaseUserMoodTagRow } from '@/shared/api/supabase/mappers';
 import { useAppInit } from '@/features/auth';
 
 export const useDataSync = () => {
@@ -21,17 +22,20 @@ export const useDataSync = () => {
       const pairId = currentUser.pairId;
       const userId = currentUser.id;
       
-      pairApi.getPartner(pairId, userId).then(p => usePairStore.getState().setPartnerUser(p));
-      placesApi.getPlaces(pairId).then(places => {
-          pairApi.getPairData(pairId).then(data => {
-              usePlaceStore.getState().setPlacesData(places, data.placeCategories, data.budgetTiers);
-              useWishTagsStore.getState().setTags(data.moodTags);
-          });
-      });
-      pairApi.getSelectedMoodTags(pairId).then(selectedTags => {
+      Promise.all([
+        pairApi.getPartner(pairId, userId),
+        placesApi.getPlaces(pairId),
+        pairApi.getPairData(pairId),
+        pairApi.getSelectedMoodTags(pairId)
+      ]).then(([partner, places, data, selectedTags]) => {
+        usePairStore.getState().setPartnerUser(partner);
+        usePlaceStore.getState().setPlacesData(places, data.placeCategories, data.budgetTiers);
+        useWishTagsStore.getState().setTags(data.moodTags);
         const myIds = selectedTags.filter(t => t.userId === userId).map(t => t.tagId);
         const partnerIds = selectedTags.filter(t => t.userId !== userId).map(t => t.tagId);
         useWishTagsStore.getState().setSelectedTags(myIds, partnerIds);
+      }).catch(err => {
+        console.error('Data Sync Error:', err);
       });
     }
   }, [status, isAuth, currentUser?.pairId, currentUser?.id, pairApi, placesApi]);
@@ -47,17 +51,18 @@ export const useDataSync = () => {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: SUPABASE_TABLES.USER_MOOD_TAGS, filter: `pair_id=eq.${pairId}` },
-        (payload) => {
-          const { eventType, new: newRecord, old: oldRecord } = payload as any;
+        (payload: RealtimePostgresChangesPayload<SupabaseUserMoodTagRow>) => {
+          const { eventType, new: newRecord, old: oldRecord } = payload;
           if (eventType === 'INSERT' && newRecord) {
             if (newRecord.user_id !== userId) {
               useWishTagsStore.getState().markPartnerTag(newRecord.tag_id);
             }
-          } else if (eventType === 'DELETE' && oldRecord) {
-            if (oldRecord.user_id !== userId) {
+          } else if (eventType === 'DELETE' && oldRecord && 'tag_id' in oldRecord) {
+            const partnerTagRecord = oldRecord as Partial<SupabaseUserMoodTagRow>;
+            if (partnerTagRecord.user_id !== userId && partnerTagRecord.tag_id) {
               const currentPartnerTags = useWishTagsStore.getState().partnerSelectedTagIds;
               useWishTagsStore.getState().setPartnerSelectedTags(
-                currentPartnerTags.filter(id => id !== oldRecord.tag_id)
+                currentPartnerTags.filter((id: string) => id !== partnerTagRecord.tag_id)
               );
             }
           }
@@ -66,12 +71,12 @@ export const useDataSync = () => {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: SUPABASE_TABLES.USERS, filter: `pair_id=eq.${pairId}` },
-        (payload) => {
+        (payload: RealtimePostgresChangesPayload<SupabaseUserRow>) => {
           // If the changed user is the partner, update the partner store
-          const newData = payload.new as any;
-          if (newData && newData.id !== userId) {
-             const mappedPartner = mapUserFromDb(newData);
-             usePairStore.getState().setPartnerUser(mappedPartner);
+          const newData = payload.new;
+          if (newData && 'id' in newData && newData.id !== userId) {
+            const mappedPartner = mapUserFromDb(newData as SupabaseUserRow);
+            usePairStore.getState().setPartnerUser(mappedPartner);
           }
         }
       )

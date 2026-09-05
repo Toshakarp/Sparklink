@@ -18,7 +18,9 @@ export default function App() {
     useMoodStore.getState().fetchMoods(currentUser, partnerUser);
   }, [currentUser, partnerUser]);
 
-  if (status === 'checking') {
+  const isDataLoading = status !== 'checking' && isAuth && !!currentUser?.pairId && !partnerUser;
+
+  if (status === 'checking' || isDataLoading) {
     return (
       <div 
          className={styles.appContainer} 
