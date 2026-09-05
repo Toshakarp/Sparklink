@@ -25,9 +25,9 @@ export const useLinkPartner = (isOpen: boolean): UseLinkPartnerReturn => {
   const [isCopied, setIsCopied] = useState(false);
   const [error] = useState<string | null>(null);
 
-  if (!isOpen && isCopied) {
-    setIsCopied(false);
-  }
+  // If the modal is closed, we can just derive it as false. 
+  // The state will reset itself via the setTimeout anyway.
+  const displayIsCopied = isOpen && isCopied;
 
   const handleCopyLink = useCallback(async () => {
     if (!inviteUrl) return;
@@ -63,7 +63,7 @@ export const useLinkPartner = (isOpen: boolean): UseLinkPartnerReturn => {
     inviteUrl,
     inviteCode: inviteUrl,
     isLoading,
-    isCopied,
+    isCopied: displayIsCopied,
     handleCopyLink,
     handleShareTelegram,
     error,

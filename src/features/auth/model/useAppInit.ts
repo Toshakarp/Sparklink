@@ -11,12 +11,17 @@ export const useAppInit = () => {
   const [status, setStatus] = useState<AppInitStatus>('checking');
   const [isInitialized, setIsInitialized] = useState(false);
   const { setApis } = useApi();
+  const currentUser = useUserStore((state) => state.currentUser);
+
+  const derivedStatus = isInitialized && status === 'telegram_no_pair' && currentUser?.pairId 
+    ? 'telegram_ready' 
+    : status;
 
   useEffect(() => {
     let isMounted = true;
 
     const initialize = async () => {
-      const startMockMode = async (tgUser?: any) => {
+      const startMockMode = async (tgUser?: { id: string | number; first_name?: string; photo_url?: string } | null) => {
         const mockApis = createMockApiSuite(tgUser ? {
           id: tgUser.id.toString(),
           telegramId: tgUser.id.toString(),
@@ -74,8 +79,8 @@ export const useAppInit = () => {
           const inviterParam = startParam.replace('invite_', '');
           try {
             const { pairId, partner } = await livePairApi.createPairWithInvite(inviterParam, currentUser.id);
-            currentUser.pairId = pairId;
-            useUserStore.getState().setCurrentUser(currentUser);
+            const updatedUser = { ...currentUser, pairId };
+            useUserStore.getState().setCurrentUser(updatedUser);
             if (partner) {
               usePairStore.getState().setPartnerUser(partner);
             }
@@ -86,7 +91,9 @@ export const useAppInit = () => {
 
         if (isMounted) {
           setApis({ userApi: liveUserApi, placesApi: livePlacesApi, pairApi: livePairApi });
-          setStatus(currentUser.pairId ? 'telegram_ready' : 'telegram_no_pair');
+          // Ensure we check the updated state if pairId was just set
+          const finalUser = useUserStore.getState().currentUser;
+          setStatus(finalUser?.pairId ? 'telegram_ready' : 'telegram_no_pair');
           setIsInitialized(true);
         }
       } catch (e) {
@@ -102,5 +109,5 @@ export const useAppInit = () => {
     return () => { isMounted = false; };
   }, [isInitialized, setApis]);
 
-  return { status, isInitialized };
+  return { status: derivedStatus, isInitialized };
 };
