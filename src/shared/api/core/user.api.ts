@@ -11,4 +11,5 @@ export interface IUserApi {
   }): Promise<UserDTO>;
   updateUserMood(userId: string | number, energy: number, moodId?: string): Promise<void>;
   updateLockitPhoto(userId: string | number, photoUrl: string | null): Promise<void>;
+  updateThemeColor(userId: string, color: string): Promise<void>
 }

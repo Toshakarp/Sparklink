@@ -17,17 +17,42 @@ export const createSupabaseUserApi = (): IUserApi => ({
   },
 
   upsertUser: async (userData) => {
+    const { data: existingUser } = await supabase
+      .from(SUPABASE_TABLES.USERS)
+      .select('*')
+      .eq('telegram_id', userData.telegramId.toString())
+      .maybeSingle();
+
+    if (existingUser) {
+      const updatePayload: Record<string, unknown> = {
+        first_name: userData.firstName,
+      };
+      if (userData.photoUrl) {
+        updatePayload.avatar_url = userData.photoUrl;
+      }
+      if (userData.themeColor) {
+        updatePayload.theme_color = userData.themeColor;
+      }
+
+      const { data, error } = await supabase
+        .from(SUPABASE_TABLES.USERS)
+        .update(updatePayload)
+        .eq('id', existingUser.id)
+        .select('*')
+        .single();
+
+      if (error) throw error;
+      return mapUserFromDb(data);
+    }
+
     const { data, error } = await supabase
       .from(SUPABASE_TABLES.USERS)
-      .upsert(
-        {
-          telegram_id: userData.telegramId.toString(),
-          first_name: userData.firstName,
-          avatar_url: userData.photoUrl,
-          theme_color: userData.themeColor || '#FF4B4B',
-        },
-        { onConflict: 'telegram_id' }
-      )
+      .insert({
+        telegram_id: userData.telegramId.toString(),
+        first_name: userData.firstName,
+        avatar_url: userData.photoUrl || null,
+        theme_color: userData.themeColor || '#FF4B4B',
+      })
       .select('*')
       .single();
 
@@ -52,6 +77,15 @@ export const createSupabaseUserApi = (): IUserApi => ({
         lockit_photo_url: photoUrl,
         lockit_updated_at: new Date().toISOString(),
       })
+      .eq('id', userId);
+
+    if (error) throw error;
+  },
+
+  updateThemeColor: async (userId, color) => {
+    const { error } = await supabase
+      .from(SUPABASE_TABLES.USERS)
+      .update({ theme_color: color })
       .eq('id', userId);
 
     if (error) throw error;

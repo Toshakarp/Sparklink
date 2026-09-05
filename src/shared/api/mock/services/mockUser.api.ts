@@ -39,5 +39,12 @@ export const createMockUserApi = (initialUserData?: Partial<UserDTO>): IUserApi 
         currentUser.lockitPhotoUrl = photoUrl;
       }
     },
+
+    updateThemeColor: async (userId, color) => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      if (userId === currentUser.id) {
+        currentUser.themeColor = color;
+      }
+    },
   };
 };

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { FC } from 'react';
 import { SettingsSubViewHeader } from './SettingsSubViewHeader';
 import { useUserStore } from '@/entities/user';
+import { useApi } from '@/app/providers/ApiProvider';
 import { Button } from '@/shared/ui';
 import styles from './AppearanceManagerView.module.scss';
 
@@ -9,11 +10,11 @@ const THEME_COLORS = [
   { value: '#FF4B4B', name: 'Красный' },
   { value: '#FF8B3E', name: 'Оранж' },
   { value: '#FFB800', name: 'Желтый' },
-  { value: '#00C853', name: 'Зеленый' },
+  { value: '#3c8159', name: 'Зеленый' },
   { value: '#00B0FF', name: 'Голубой' },
   { value: '#651FFF', name: 'Лиловый' },
   { value: '#AA00FF', name: 'Пурпур' },
-  { value: '#F50057', name: 'Розовый' },
+  { value: '#be2a5e', name: 'Розовый' },
 ];
 
 export interface AppearanceManagerViewProps {
@@ -24,6 +25,7 @@ export const AppearanceManagerView: FC<AppearanceManagerViewProps> = ({
   onBack,
 }) => {
   const { currentUser, updateThemeColor } = useUserStore();
+  const { userApi } = useApi();
   const [selectedColor, setSelectedColor] = useState(currentUser?.themeColor || '#FF4B4B');
   const [isSaving, setIsSaving] = useState(false);
 
@@ -31,8 +33,13 @@ export const AppearanceManagerView: FC<AppearanceManagerViewProps> = ({
     if (!currentUser) return;
     setIsSaving(true);
     try {
+      if (userApi) {
+        await userApi.updateThemeColor(currentUser.id, selectedColor);
+      }
       await updateThemeColor(selectedColor);
       onBack();
+    } catch (e) {
+      console.error('Failed to update theme color', e);
     } finally {
       setIsSaving(false);
     }
@@ -54,7 +61,7 @@ export const AppearanceManagerView: FC<AppearanceManagerViewProps> = ({
               >
                 <div 
                   className={`${styles.colorDot} ${selectedColor === color.value ? styles.activeColor : ''}`}
-                  style={{ backgroundColor: color.value }}
+                  style={{ '--dot-color': color.value } as React.CSSProperties}
                 />
                 <span className={styles.colorName}>{color.name}</span>
               </button>
@@ -63,7 +70,7 @@ export const AppearanceManagerView: FC<AppearanceManagerViewProps> = ({
         </div>
       </div>
 
-      <div >
+      <div className={styles.saveAction}>
         <Button
           fullWidth
           variant="primary"
