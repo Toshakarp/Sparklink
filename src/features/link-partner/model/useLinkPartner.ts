@@ -16,7 +16,7 @@ export interface UseLinkPartnerReturn {
 export const useLinkPartner = (isOpen: boolean): UseLinkPartnerReturn => {
   const currentUser = useUserStore((state) => state.currentUser);
   const inviteUrl = currentUser?.id
-    ? `https://t.me/sparklink_bot/app?startapp=invite_${currentUser.id}`
+    ? `https://t.me/sparklinkTMA_bot/app?startapp=invite_${currentUser.id}`
     : '';
 
   const [isLoading] = useState(false);
