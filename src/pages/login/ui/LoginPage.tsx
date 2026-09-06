@@ -6,6 +6,7 @@ import { DemoAuthButton, RetryAuthButton } from '@/features/auth';
 import { LinkPartnerModal } from '@/features/link-partner';
 import { useUserStore } from '@/entities/user';
 import { useAppInit } from '@/features/auth';
+import { useCooldown } from '@/shared/lib/hooks';
 import styles from './LoginPage.module.scss';
 
 export interface LoginPageProps {
@@ -15,11 +16,14 @@ export interface LoginPageProps {
 export const LoginPage: FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
   const [isRetrying, setIsRetrying] = useState(false);
+  const { isCooldown, trigger: triggerCooldown } = useCooldown(2500);
   const isAuth = useUserStore((state) => state.isAuth);
   const { retryInit } = useAppInit();
 
   const handleRetry = async () => {
+    if (isRetrying || isCooldown) return;
     setIsRetrying(true);
+    triggerCooldown();
     try {
       await retryInit();
     } finally {
@@ -104,7 +108,11 @@ export const LoginPage: FC<LoginPageProps> = ({ onLoginSuccess }) => {
               <p style={{ textAlign: 'center', fontSize: '14px', color: 'var(--text-secondary)' }}>
                 Не удалось подключиться к базе данных или Telegram.
               </p>
-              <RetryAuthButton isLoading={isRetrying} onRetry={handleRetry} />
+              <RetryAuthButton
+                isLoading={isRetrying}
+                isCooldown={isCooldown}
+                onRetry={handleRetry}
+              />
               <div className={styles.dividerRow}>
                 <span className={styles.dividerLine} />
                 <span className={styles.dividerText}>или</span>

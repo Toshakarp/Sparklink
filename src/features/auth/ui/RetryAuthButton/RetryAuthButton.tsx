@@ -5,19 +5,26 @@ import { Button } from '@/shared/ui';
 export interface RetryAuthButtonProps {
   onRetry: () => void;
   isLoading?: boolean;
+  isCooldown?: boolean;
 }
 
-export const RetryAuthButton: FC<RetryAuthButtonProps> = ({ onRetry, isLoading }) => {
+export const RetryAuthButton: FC<RetryAuthButtonProps> = ({
+  onRetry,
+  isLoading = false,
+  isCooldown = false,
+}) => {
+  const isDisabled = isLoading || isCooldown;
+
   return (
     <Button
       type="button"
       variant={isLoading ? 'secondary' : 'warning'}
       fullWidth
       onClick={onRetry}
-      disabled={isLoading}
-      icon={<RefreshCw size={18} />}
+      disabled={isDisabled}
+      icon={<RefreshCw size={18} className={isLoading ? 'animate-spin' : ''} />}
     >
-      {isLoading ? 'Подключение...' : 'Повторить попытку'}
+      {isLoading ? 'Подключение...' : isCooldown ? 'Подождите...' : 'Повторить попытку'}
     </Button>
   );
 };

@@ -37,6 +37,22 @@ export const createMockPairApi = (): IPairApi => {
       return [...selectedTags];
     },
 
+    createMoodTag: async (_pairId, label, emoji, audience) => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      return {
+        id: `mock-mood-tag-${Date.now()}`,
+        label,
+        emoji,
+        audience
+      };
+    },
+    updateMoodTag: async () => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    },
+    deleteMoodTag: async () => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    },
+
     toggleUserMoodTag: async (
       userId: string,
       pairId: string,
@@ -53,6 +69,10 @@ export const createMockPairApi = (): IPairApi => {
           (t) => !(t.userId === userId && t.tagId === tagId)
         );
       }
+    },
+
+    updateBudgetTier: async () => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
     },
   };
 };

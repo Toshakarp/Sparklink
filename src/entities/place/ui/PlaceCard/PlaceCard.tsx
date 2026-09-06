@@ -5,6 +5,7 @@ import { BudgetTag } from '../BudgetTag/BudgetTag';
 import { PlaceLikeButton } from '../PlaceLikeButton/PlaceLikeButton';
 import { usePlaceStore } from '../../model/usePlaceStore';
 import { getBudgetTier } from '../../lib/budgetHelpers';
+import { useApi } from '@/app/providers/ApiProvider';
 import styles from './PlaceCard.module.scss';
 
 export interface PlaceCardProps {
@@ -22,18 +23,36 @@ export const PlaceCard: FC<PlaceCardProps> = ({
 }) => {
   const isLikedByMe = usePlaceStore((state) => state.likedPlaceIds.includes(place.id));
   const incrementCount = usePlaceStore((state) => state.incrementCount);
+  const rollbackIncrementCount = usePlaceStore((state) => state.rollbackIncrementCount);
   const dateTags = usePlaceStore((state) => state.dateTags);
   const budgetTiers = usePlaceStore((state) => state.budgetTiers);
+  const { placesApi } = useApi();
 
   const resolvedBudgetTier = budgetTier || getBudgetTier(place.budgetId, budgetTiers);
   const resolvedTags = tags !== undefined ? tags : dateTags.filter((t) => place.categoryIds?.includes(t.id));
 
   const clickCount = place.clickCount || 0;
 
-  const handleLike = (e: MouseEvent<HTMLButtonElement>) => {
+  const handleLike = async (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    if (!isLikedByMe) {
-      incrementCount(place.id);
+    if (isLikedByMe) return;
+
+    const originalClickCount = place.clickCount || 0;
+    const originalLastClickedAt = place.lastClickedAt || null;
+
+    incrementCount(place.id);
+
+    if (placesApi) {
+      try {
+        await placesApi.updatePlace({
+          ...place,
+          clickCount: originalClickCount + 1,
+          lastClickedAt: new Date().toISOString(),
+        });
+      } catch (err) {
+        console.error('Failed to update place like in DB', err);
+        rollbackIncrementCount(place.id, originalClickCount, originalLastClickedAt);
+      }
     }
   };
 

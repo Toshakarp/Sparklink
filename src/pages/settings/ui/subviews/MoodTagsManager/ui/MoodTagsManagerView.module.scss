@@ -1,0 +1,87 @@
+@use '@/shared/styles/variables.scss' as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 8px 0 28px;
+}
+
+.addFormCard {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  background-color: $color-bg-card;
+  border: 1px solid $border-subtle;
+  border-radius: $radius-square;
+}
+
+.cardTitle {
+  font-size: 11px;
+  font-weight: 800;
+  color: $text-muted;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.listSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sectionHeader {
+  font-size: 11px;
+  font-weight: 800;
+  color: $text-muted;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin: 8px 0 0;
+}
+
+.tagItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background-color: $color-bg-card;
+  border: 1px solid $border-subtle;
+  border-radius: $radius-square;
+  gap: 10px;
+}
+
+.tagLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tagActions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tagEmoji {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.tagTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: $text-primary;
+}
+
+.tagBadge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 2px 8px;
+  border-radius: $radius-oval;
+  background-color: $border-subtle;
+  color: $text-secondary;
+}

@@ -18,6 +18,7 @@ export interface WishTagsState {
   addMoodTag: (tag: Omit<TagDTO, 'id'> & { id?: string }) => void;
   updateMoodTag: (tag: TagDTO) => void;
   deleteMoodTag: (id: string) => void;
+  replaceMoodTag: (oldId: string, newTag: TagDTO) => void;
 }
 
 export const useWishTagsStore = create<WishTagsState>((set) => ({
@@ -74,5 +75,13 @@ export const useWishTagsStore = create<WishTagsState>((set) => ({
   deleteMoodTag: (id) => {
     set((state) => ({ moodTags: state.moodTags.filter(t => t.id !== id) }));
     tgService.haptic('medium');
+  },
+
+  replaceMoodTag: (oldId, newTag) => {
+    set((state) => ({
+      moodTags: state.moodTags.map(t => (t.id === oldId ? newTag : t)),
+      mySelectedTagIds: state.mySelectedTagIds.map(id => (id === oldId ? newTag.id : id)),
+      partnerSelectedTagIds: state.partnerSelectedTagIds.map(id => (id === oldId ? newTag.id : id)),
+    }));
   }
 }));

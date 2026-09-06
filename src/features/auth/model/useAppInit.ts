@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { create } from 'zustand';
 import { tgService } from '@/shared/lib/telegram/telegram';
 import { useApi } from '@/app/providers/ApiProvider';
@@ -31,7 +31,7 @@ export const useAppInit = () => {
     ? 'telegram_ready' 
     : status;
 
-  const initialize = async () => {
+  const initialize = useCallback(async () => {
     setStatus('checking');
     setIsInitialized(false);
     
@@ -109,13 +109,13 @@ export const useAppInit = () => {
       useUserStore.getState().setCurrentUser(null);
       await startMockMode();
     }
-  };
+  }, [setApis, setIsInitialized, setStatus]);
 
   useEffect(() => {
     if (!isInitialized) {
       initialize();
     }
-  }, [isInitialized, setApis]);
+  }, [isInitialized, initialize]);
 
   return { status: derivedStatus, isInitialized, retryInit: initialize };
 };

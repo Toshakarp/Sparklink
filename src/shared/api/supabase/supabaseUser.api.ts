@@ -9,7 +9,7 @@ export const createSupabaseUserApi = (): IUserApi => ({
       .from(SUPABASE_TABLES.USERS)
       .select('*')
       .eq('telegram_id', telegramId.toString())
-      .single();
+      .maybeSingle();
 
     if (error || !data) return null;
 

@@ -19,11 +19,16 @@ export interface IPairApi {
     inviterParam: string,
     currentUserId: string
   ): Promise<{ pairId: string; partner: UserDTO | null }>;
+
   getSelectedMoodTags(pairId: string): Promise<UserMoodTagDTO[]>;
+  createMoodTag(pairId: string, label: string, emoji: string, audience: 'together' | 'alone'): Promise<TagDTO>;
+  updateMoodTag(tag: TagDTO): Promise<void>;
+  deleteMoodTag(tagId: string): Promise<void>;
   toggleUserMoodTag(
     userId: string,
     pairId: string,
     tagId: string,
     isSelected: boolean
   ): Promise<void>;
+  updateBudgetTier(tier: BudgetTierDTO): Promise<void>;
 }

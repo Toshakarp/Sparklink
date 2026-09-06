@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, type ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useMemo, type ReactNode } from 'react';
 import type { IUserApi, IPlacesApi, IPairApi } from '@/shared/api/core';
 
 export interface ApiContextValue {
@@ -17,12 +17,14 @@ export const ApiProvider = ({ children }: { children: ReactNode }) => {
     pairApi: null,
   });
 
-  const setApis = (newApis: { userApi: IUserApi; placesApi: IPlacesApi; pairApi: IPairApi }) => {
+  const setApis = useCallback((newApis: { userApi: IUserApi; placesApi: IPlacesApi; pairApi: IPairApi }) => {
     setApisState(newApis);
-  };
+  }, []);
+
+  const value = useMemo(() => ({ ...apis, setApis }), [apis, setApis]);
 
   return (
-    <ApiContext.Provider value={{ ...apis, setApis }}>
+    <ApiContext.Provider value={value}>
       {children}
     </ApiContext.Provider>
   );

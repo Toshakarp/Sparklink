@@ -15,12 +15,16 @@ export interface PlaceState {
   updatePlace: (place: PlaceDTO) => void;
   deletePlace: (id: string) => void;
   incrementCount: (id: string) => void;
+  rollbackIncrementCount: (id: string, originalClickCount?: number, originalLastClickedAt?: string | null) => void;
+  replacePlace: (oldId: string, newPlace: PlaceDTO) => void;
   
-  addDateCategory: (tag: (Omit<DateCategoryDTO, 'id' | 'pair_id'> & { id?: string; pair_id?: string })) => void;
+  addDateCategory: (tag: (Omit<DateCategoryDTO, 'id' | 'pairId'> & { id?: string; pairId?: string })) => void;
   updateDateCategory: (tag: DateCategoryDTO) => void;
   deleteDateCategory: (id: string) => void;
+  replaceDateCategory: (oldId: string, newCategory: DateCategoryDTO) => void;
   
   updateBudgetTier: (tier: BudgetTierDTO) => void;
+  setBudgetTiers: (tiers: BudgetTierDTO[]) => void;
 }
 
 export const usePlaceStore = create<PlaceState>((set) => ({
@@ -75,13 +79,34 @@ export const usePlaceStore = create<PlaceState>((set) => ({
     });
     tgService.haptic('medium');
   },
+
+  rollbackIncrementCount: (id, originalClickCount, originalLastClickedAt) => {
+    set((state) => ({
+      likedPlaceIds: state.likedPlaceIds.filter((pId) => pId !== id),
+      dateIdeas: state.dateIdeas.map((p) =>
+        p.id === id
+          ? {
+              ...p,
+              clickCount: originalClickCount !== undefined ? originalClickCount : Math.max(0, (p.clickCount || 1) - 1),
+              lastClickedAt: originalLastClickedAt !== undefined ? originalLastClickedAt : null,
+            }
+          : p
+      ),
+    }));
+  },
+
+  replacePlace: (oldId, newPlace) => {
+    set((state) => ({
+      dateIdeas: state.dateIdeas.map((p) => (p.id === oldId ? newPlace : p)),
+    }));
+  },
   
   addDateCategory: (tag) => {
     const t = tag as Partial<DateCategoryDTO>;
     const newCategory: DateCategoryDTO = { 
        ...tag, 
        id: t.id || (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : 'cat-temp'),
-      pair_id: t.pair_id || 'local'
+      pairId: t.pairId || 'local'
     };
     set((state) => ({ dateTags: [...state.dateTags, newCategory] }));
     tgService.haptic('success');
@@ -97,8 +122,18 @@ export const usePlaceStore = create<PlaceState>((set) => ({
     tgService.haptic('medium');
   },
 
+  replaceDateCategory: (oldId, newCategory) => {
+    set((state) => ({
+      dateTags: state.dateTags.map((t) => (t.id === oldId ? newCategory : t)),
+    }));
+  },
+
   updateBudgetTier: (updatedTier) => {
     set((state) => ({ budgetTiers: state.budgetTiers.map((t) => (t.id === updatedTier.id ? updatedTier : t)) }));
     tgService.haptic('success');
+  },
+
+  setBudgetTiers: (tiers) => {
+    set({ budgetTiers: tiers });
   }
 }));

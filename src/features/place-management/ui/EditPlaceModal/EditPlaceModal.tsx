@@ -37,6 +37,7 @@ export const EditPlaceModal: FC<EditPlaceModalProps> = ({
   };
 
   const handleFormSubmit = async (data: PlaceFormData) => {
+    const originalPlace = { ...place };
     const updated: PlaceDTO = {
       ...place,
       title: data.title,
@@ -47,26 +48,31 @@ export const EditPlaceModal: FC<EditPlaceModalProps> = ({
       categoryIds: data.categoryIds || [],
     };
     onSavePlace(updated);
+    onClose();
+
     if (placesApi) {
       try {
         await placesApi.updatePlace(updated);
       } catch (e) {
         console.error('Failed to update place in API', e);
+        onSavePlace(originalPlace); // rollback on error
       }
     }
-    onClose();
   };
 
   const handleDelete = async () => {
+    const originalPlace = { ...place };
     onDeletePlace(place.id);
+    onClose();
+
     if (placesApi) {
       try {
         await placesApi.deletePlace(place.id);
       } catch (e) {
         console.error('Failed to delete place in API', e);
+        onSavePlace(originalPlace); // rollback on error
       }
     }
-    onClose();
   };
 
   return (

@@ -3,6 +3,7 @@ import type { FC } from 'react';
 import { Heart } from 'lucide-react';
 import { Modal, Card, Button } from '@/shared/ui';
 import { usePlaceStore, getBudgetTier } from '@/entities/place';
+import { useApi } from '@/app/providers/ApiProvider';
 import { PlaceDetailHero } from './PlaceDetailHero';
 import { PlaceDetailMeta } from './PlaceDetailMeta';
 import styles from './PlaceDetailModal.module.scss';
@@ -20,8 +21,10 @@ export const PlaceDetailModal: FC<PlaceDetailModalProps> = ({
   place,
   onEdit,
 }) => {
+  const { placesApi } = useApi();
   const likedPlaceIds = usePlaceStore(state => state.likedPlaceIds);
   const onIncrementClick = usePlaceStore(state => state.incrementCount);
+  const rollbackIncrementCount = usePlaceStore(state => state.rollbackIncrementCount);
   const budgetTiers = usePlaceStore(state => state.budgetTiers);
   const allTags = usePlaceStore(state => state.dateTags);
   const livePlace = usePlaceStore(state => state.dateIdeas.find(p => p.id === place?.id)) || place;
@@ -33,9 +36,26 @@ export const PlaceDetailModal: FC<PlaceDetailModalProps> = ({
   const tags = allTags.filter(t => livePlace.categoryIds?.includes(t.id));
   const clickCount = livePlace.clickCount || 0;
 
-  const handleIncrement = () => {
-    if (isLikedByMe) return;
+  const handleIncrement = async () => {
+    if (isLikedByMe || !livePlace) return;
+
+    const originalClickCount = livePlace.clickCount || 0;
+    const originalLastClickedAt = livePlace.lastClickedAt || null;
+
     onIncrementClick(livePlace.id);
+
+    if (placesApi) {
+      try {
+        await placesApi.updatePlace({
+          ...livePlace,
+          clickCount: originalClickCount + 1,
+          lastClickedAt: new Date().toISOString(),
+        });
+      } catch (err) {
+        console.error('Failed to update place click in DB', err);
+        rollbackIncrementCount(livePlace.id, originalClickCount, originalLastClickedAt);
+      }
+    }
   };
 
   return (

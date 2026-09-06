@@ -2,16 +2,19 @@ import { useState } from 'react';
 import type { FC } from 'react';
 import { UnlinkModal } from '@/features/partner-management';
 import { SettingsSection } from '@/widgets/settings-section';
-import { PlacesManagerView } from '../subviews/PlacesManagerView';
-import { MoodTagsManagerView } from '../subviews/MoodTagsManagerView';
-import { DateCategoriesManagerView } from '../subviews/DateCategoriesManagerView';
-import { BudgetManagerView } from '../subviews/BudgetManagerView';
-import { AppearanceManagerView } from '../subviews/AppearanceManagerView';
-import { NotificationsManagerView } from '../subviews/NotificationsManagerView';
+import {
+  PlacesManagerView,
+  MoodTagsManagerView,
+  DateCategoriesManagerView,
+  BudgetManagerView,
+  AppearanceManagerView,
+  NotificationsManagerView,
+} from '../subviews';
 import { usePairStore } from '@/entities/pair';
 import { usePlaceStore } from '@/entities/place';
 import { useWishTagsStore } from '@/entities/mood';
 import { tgService } from '@/shared/lib/telegram/telegram';
+import { SyncDataButton } from '@/features/sync';
 import styles from './SettingsPage.module.scss';
 
 type SubView =
@@ -27,7 +30,7 @@ export const SettingsPage: FC = () => {
   const [currentView, setCurrentView] = useState<SubView>('none');
   const [isUnlinkModalOpen, setIsUnlinkModalOpen] = useState(false);
   
-  const isDemo = !(window as any).Telegram?.WebApp?.initData;
+  const isDemo = !tgService.getInitData();
   const { partnerUser, unlinkPartner } = usePairStore();
   const { dateIdeas: places, dateTags, budgetTiers } = usePlaceStore();
   const { moodTags } = useWishTagsStore();
@@ -67,6 +70,8 @@ export const SettingsPage: FC = () => {
 
   return (
     <div className={styles.container}>
+      <SyncDataButton />
+      
       <SettingsSection
         placesCount={places.length}
         dateTagsCount={Math.max(0, dateTags.length - 1)}

@@ -38,7 +38,7 @@ export interface SupabaseUserMoodTagRow {
 
 export const mapCategoryFromDb = (row: SupabasePlaceCategoryRow): DateCategoryDTO => ({
   id: row.id,
-  pair_id: row.pair_id,
+  pairId: row.pair_id,
   label: row.label,
   emoji: row.emoji,
 });
@@ -48,7 +48,7 @@ export const mapMoodTagFromDb = (row: SupabaseMoodTagRow): TagDTO => ({
   pairId: row.pair_id,
   label: row.label,
   emoji: row.emoji,
-  audience: row.audience,
+  audience: row.audience || 'alone',
 });
 
 export const mapBudgetTierFromDb = (row: SupabaseBudgetTierRow): BudgetTierDTO => ({

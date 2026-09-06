@@ -37,5 +37,21 @@ export const createMockPlacesApi = (): IPlacesApi => {
       await new Promise((resolve) => setTimeout(resolve, 100));
       places = places.filter((p) => p.id !== placeId);
     },
+
+    createDateCategory: async (_pairId, label, emoji) => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      return {
+        id: `mock-category-${Date.now()}`,
+        pairId: _pairId,
+        label,
+        emoji,
+      };
+    },
+    updateDateCategory: async () => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    },
+    deleteDateCategory: async () => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    },
   };
 };

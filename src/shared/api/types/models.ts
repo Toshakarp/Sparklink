@@ -55,7 +55,7 @@ export interface BudgetTierDTO {
 
 export interface DateCategoryDTO {
   id: string;
-  pair_id?: string;
+  pairId?: string;
   label: string;
   emoji: string;
 }

@@ -1,0 +1,96 @@
+@use '@/shared/styles/variables.scss' as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 8px 0 28px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sectionHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sectionTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: $text-primary;
+}
+
+.sectionDesc {
+  font-size: 13px;
+  color: $text-secondary;
+  line-height: 1.4;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tierCard {
+  background-color: $color-bg-card;
+  border: 1px solid $border-subtle;
+  border-radius: $radius-square;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.mainRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tagWrapper {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.rangeInfo {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.rangeText {
+  font-size: 13px;
+  font-weight: 600;
+  color: $text-secondary;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.activeEditBtn {
+  color: $color-green;
+  background-color: rgba($color-green, 0.15);
+}
+
+.editRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 4px;
+  border-top: 1px dashed $border-subtle;
+}
+
+.actions {
+  margin-top: 8px;
+}
