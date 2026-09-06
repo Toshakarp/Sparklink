@@ -13,9 +13,9 @@ export const mockMoodTagsDTO: TagDTO[] = [
 ];
 
 export const mockBudgetTiersDTO: BudgetTierDTO[] = [
-  { id: 'free', label: 'Бесплатно', level: 1 },
-  { id: 'budget', label: 'Эконом', level: 2 },
-  { id: 'medium', label: 'Средний', level: 3 },
-  { id: 'premium', label: 'Дорого', level: 4 },
-  { id: 'luxury', label: 'Очень дорого', level: 5 },
+  { id: 'free', label: 'Бесплатно', level: 1, emoji: '🆓' },
+  { id: 'budget', label: 'Эконом', level: 2, emoji: '🪙' },
+  { id: 'medium', label: 'Средний', level: 3, emoji: '💵' },
+  { id: 'premium', label: 'Дорого', level: 4, emoji: '💳' },
+  { id: 'luxury', label: 'Очень дорого', level: 5, emoji: '💎' },
 ];

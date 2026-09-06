@@ -2,6 +2,7 @@ export interface InitialBudgetTier {
   key: string;
   label: string;
   level: number;
+  emoji: string;
 }
 
 export interface InitialPlaceCategory {
@@ -27,11 +28,11 @@ export interface InitialPlace {
 }
 
 export const INITIAL_BUDGET_TIERS: InitialBudgetTier[] = [
-  { key: 'free', label: 'Бесплатно', level: 1 },
-  { key: 'budget', label: 'Эконом', level: 2 },
-  { key: 'medium', label: 'Средний', level: 3 },
-  { key: 'premium', label: 'Дорого', level: 4 },
-  { key: 'luxury', label: 'Очень дорого', level: 5 },
+  { key: 'free', label: 'Бесплатно', level: 1, emoji: '🆓' },
+  { key: 'budget', label: 'Эконом', level: 2, emoji: '🪙' },
+  { key: 'medium', label: 'Средний', level: 3, emoji: '💵' },
+  { key: 'premium', label: 'Дорого', level: 4, emoji: '💳' },
+  { key: 'luxury', label: 'Очень дорого', level: 5, emoji: '💎' },
 ];
 
 export const INITIAL_PLACE_CATEGORIES: InitialPlaceCategory[] = [

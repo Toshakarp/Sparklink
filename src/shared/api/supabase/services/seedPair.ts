@@ -13,6 +13,7 @@ export const seedPairInitialData = async (pairId: string): Promise<void> => {
       pair_id: pairId,
       label: tier.label,
       level: tier.level,
+      emoji: tier.emoji,
     }));
 
     const categoryRows = INITIAL_PLACE_CATEGORIES.map((cat) => ({
@@ -29,11 +30,21 @@ export const seedPairInitialData = async (pairId: string): Promise<void> => {
     }));
 
     // Сохраняем в БД, получая сгенерированные базой ID
-    const [budgetRes, categoryRes] = await Promise.all([
+    const [budgetRes, categoryRes, moodTagRes] = await Promise.all([
       supabase.from(SUPABASE_TABLES.BUDGET_TIERS).insert(budgetRows).select('id, level'),
       supabase.from(SUPABASE_TABLES.PLACE_CATEGORIES).insert(categoryRows).select('id, label'),
       supabase.from(SUPABASE_TABLES.MOOD_TAGS).insert(moodTagRows),
     ]);
+
+    if (budgetRes.error) {
+      console.error('Failed to insert budget tiers:', budgetRes.error);
+    }
+    if (categoryRes.error) {
+      console.error('Failed to insert place categories:', categoryRes.error);
+    }
+    if (moodTagRes.error) {
+      console.error('Failed to insert mood tags:', moodTagRes.error);
+    }
 
     const createdBudgets = budgetRes.data || [];
     const createdCategories = categoryRes.data || [];
@@ -69,7 +80,10 @@ export const seedPairInitialData = async (pairId: string): Promise<void> => {
       };
     });
 
-    await supabase.from(SUPABASE_TABLES.PLACES).insert(placeRows);
+    const placesRes = await supabase.from(SUPABASE_TABLES.PLACES).insert(placeRows);
+    if (placesRes.error) {
+      console.error('Failed to insert places:', placesRes.error);
+    }
   } catch (error) {
     console.error('Failed to seed pair data', error);
   }

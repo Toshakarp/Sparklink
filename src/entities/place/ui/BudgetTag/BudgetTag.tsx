@@ -25,6 +25,7 @@ export const BudgetTag: FC<BudgetTagProps> = ({
   return (
     <Tag
       label={budgetTier.label}
+      emoji={budgetTier.emoji}
       className={classes}
       isActive={isActive}
       {...props}

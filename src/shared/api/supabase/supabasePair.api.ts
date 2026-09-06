@@ -35,7 +35,7 @@ export const createSupabasePairApi = (): IPairApi => ({
     let moodTags = (tagsRes.data || []).map(mapMoodTagFromDb);
     let budgetTiers = (budgetRes.data || []).map(mapBudgetTierFromDb);
 
-    if (placeCategories.length === 0 || moodTags.length === 0 || budgetTiers.length === 0) {
+    if (placeCategories.length === 0 && moodTags.length === 0) {
       try {
         await seedPairInitialData(pairId);
         const [refreshedCats, refreshedTags, refreshedBudgets] = await Promise.all([
