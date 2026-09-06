@@ -81,16 +81,6 @@
   display: flex;
   align-items: center;
   gap: $gap-md;
-  padding: $spacing-md;
-  background: rgba($color-white, 0.03);
-  border: 1px solid $border-subtle;
-  border-radius: $radius-card;
-  transition: transform 0.2s ease, border-color 0.2s ease;
-
-  &:hover {
-    border-color: $border-medium;
-    transform: translateY(-1px);
-  }
 }
 
 .featureIcon {

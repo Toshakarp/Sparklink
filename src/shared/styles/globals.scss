@@ -5,6 +5,7 @@
   --tabbar-height: 64px;
   --header-height: 56px;
   --partner-color: #{$color-pink};
+  --tg-safe-area-top: max(var(--tg-viewport-header-offset, 0px), 12px);
 }
 
 @media (max-width: 360px) {

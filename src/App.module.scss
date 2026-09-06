@@ -12,6 +12,7 @@
   position: relative;
   overflow: hidden;
   box-shadow: 0 0 40px rgba($color-black, 0.6);
+  padding-top: var(--tg-safe-area-top);
 }
 
 .mainScrollArea {
