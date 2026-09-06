@@ -11,8 +11,8 @@ export const seedPairInitialData = async (pairId: string): Promise<void> => {
   try {
     const budgetRows = INITIAL_BUDGET_TIERS.map((tier) => ({
       pair_id: pairId,
-      label: tier.label,
-      level: tier.level,
+      name: tier.label,
+      color_level: tier.level,
       emoji: tier.emoji,
     }));
 
@@ -31,7 +31,7 @@ export const seedPairInitialData = async (pairId: string): Promise<void> => {
 
     // Сохраняем в БД, получая сгенерированные базой ID
     const [budgetRes, categoryRes, moodTagRes] = await Promise.all([
-      supabase.from(SUPABASE_TABLES.BUDGET_TIERS).insert(budgetRows).select('id, level'),
+      supabase.from(SUPABASE_TABLES.BUDGET_TIERS).insert(budgetRows).select('id, color_level'),
       supabase.from(SUPABASE_TABLES.PLACE_CATEGORIES).insert(categoryRows).select('id, label'),
       supabase.from(SUPABASE_TABLES.MOOD_TAGS).insert(moodTagRows),
     ]);
@@ -51,7 +51,7 @@ export const seedPairInitialData = async (pairId: string): Promise<void> => {
 
     const budgetMap = new Map<string, string>();
     INITIAL_BUDGET_TIERS.forEach((tier) => {
-      const match = createdBudgets.find((b) => b.level === tier.level);
+      const match = createdBudgets.find((b) => b.color_level === tier.level);
       if (match) budgetMap.set(tier.key, match.id);
     });
 

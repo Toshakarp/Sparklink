@@ -23,10 +23,10 @@ export interface SupabaseMoodTagRow {
 export interface SupabaseBudgetTierRow {
   id: string;
   pair_id?: string;
-  label: string;
+  name: string;
   range_label?: string;
   emoji?: string;
-  level?: number;
+  color_level?: number;
 }
 
 export interface SupabaseUserMoodTagRow {
@@ -54,10 +54,10 @@ export const mapMoodTagFromDb = (row: SupabaseMoodTagRow): TagDTO => ({
 export const mapBudgetTierFromDb = (row: SupabaseBudgetTierRow): BudgetTierDTO => ({
   id: row.id,
   pairId: row.pair_id,
-  label: row.label,
+  label: row.name,
   rangeLabel: row.range_label,
   emoji: row.emoji,
-  level: row.level,
+  level: row.color_level,
 });
 
 export const mapUserMoodTagFromDb = (row: SupabaseUserMoodTagRow): UserMoodTagDTO => ({

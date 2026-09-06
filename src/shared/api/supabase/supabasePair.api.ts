@@ -35,6 +35,8 @@ export const createSupabasePairApi = (): IPairApi => ({
     let moodTags = (tagsRes.data || []).map(mapMoodTagFromDb);
     let budgetTiers = (budgetRes.data || []).map(mapBudgetTierFromDb);
 
+    // ПРЕДОТВРАЩЕНИЕ КАСКАДА: сидируем только если ВСЕ основные таблицы пусты (новая пара).
+    // Использование "||" приводило к бесконечному циклу, если одна из таблиц не могла заполниться (например, budget_tiers).
     if (placeCategories.length === 0 && moodTags.length === 0) {
       try {
         await seedPairInitialData(pairId);
@@ -62,10 +64,10 @@ export const createSupabasePairApi = (): IPairApi => ({
     const { error } = await supabase
       .from(SUPABASE_TABLES.BUDGET_TIERS)
       .update({
-        label: tier.label,
+        name: tier.label,
         range_label: tier.rangeLabel,
         emoji: tier.emoji,
-        level: tier.level,
+        color_level: tier.level,
       })
       .eq('id', tier.id);
     if (error) throw error;
