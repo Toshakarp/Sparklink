@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import { create } from 'zustand';
 import { tgService } from '@/shared/lib/telegram/telegram';
 import { useApi } from '@/app/providers/ApiProvider';
 import { useUserStore } from '@/entities/user/model/useUserStore';
@@ -7,9 +8,22 @@ import { createMockApiSuite } from './mockAuthHelper';
 
 export type AppInitStatus = 'checking' | 'browser_mock' | 'telegram_no_pair' | 'telegram_ready';
 
+interface AppInitState {
+  status: AppInitStatus;
+  isInitialized: boolean;
+  setStatus: (status: AppInitStatus) => void;
+  setIsInitialized: (val: boolean) => void;
+}
+
+const useAppInitStore = create<AppInitState>((set) => ({
+  status: 'checking',
+  isInitialized: false,
+  setStatus: (status) => set({ status }),
+  setIsInitialized: (val) => set({ isInitialized: val }),
+}));
+
 export const useAppInit = () => {
-  const [status, setStatus] = useState<AppInitStatus>('checking');
-  const [isInitialized, setIsInitialized] = useState(false);
+  const { status, isInitialized, setStatus, setIsInitialized } = useAppInitStore();
   const { setApis } = useApi();
   const currentUser = useUserStore((state) => state.currentUser);
 
@@ -17,97 +31,91 @@ export const useAppInit = () => {
     ? 'telegram_ready' 
     : status;
 
-  useEffect(() => {
-    let isMounted = true;
-
-    const initialize = async () => {
-      const startMockMode = async (tgUser?: { id: string | number; first_name?: string; photo_url?: string } | null) => {
-        const mockApis = createMockApiSuite(tgUser ? {
-          id: tgUser.id.toString(),
-          telegramId: tgUser.id.toString(),
-          firstName: tgUser.first_name || 'Пользователь',
-          photoUrl: tgUser.photo_url || undefined
-        } : undefined);
-
-        if (isMounted) {
-          setApis(mockApis);
-          setStatus('browser_mock');
-          setIsInitialized(true);
-        }
-      };
-
-      try {
-        const inTMA = await tgService.isAvailable();
-        if (!inTMA) {
-          await startMockMode();
-          return;
-        }
-
-        let liveUserApi, livePlacesApi, livePairApi;
-        try {
-          const { createSupabaseUserApi, createSupabasePlacesApi, createSupabasePairApi } = await import('@/shared/api/supabase/index');
-          liveUserApi = createSupabaseUserApi();
-          livePlacesApi = createSupabasePlacesApi();
-          livePairApi = createSupabasePairApi();
-        } catch (err) {
-          console.warn('Supabase не доступен:', err);
-          await startMockMode();
-          return;
-        }
-
-        const tgUser = tgService.getTelegramUser();
-        if (!tgUser) {
-          await startMockMode();
-          return;
-        }
-
-        const fetchPromise = liveUserApi.upsertUser({
-          telegramId: tgUser.id.toString(),
-          firstName: tgUser.first_name || 'Пользователь',
-          photoUrl: tgUser.photo_url || null,
-          initDataRaw: tgService.getInitData()
-        });
-
-        const timeoutPromise = new Promise<never>((_, reject) => setTimeout(() => reject(new Error('Timeout')), 7000));
-        const currentUser = await Promise.race([fetchPromise, timeoutPromise]);
-
-        useUserStore.getState().setCurrentUser(currentUser);
-
-        const startParam = tgService.getStartParam();
-
-        if (startParam && startParam.startsWith('invite_') && !currentUser.pairId) {
-          const inviterParam = startParam.replace('invite_', '');
-          try {
-            const { pairId, partner } = await livePairApi.createPairWithInvite(inviterParam, currentUser.id);
-            const updatedUser = { ...currentUser, pairId };
-            useUserStore.getState().setCurrentUser(updatedUser);
-            if (partner) {
-              usePairStore.getState().setPartnerUser(partner);
-            }
-          } catch (linkErr) {
-            console.warn('Ошибка привязки:', linkErr);
-          }
-        }
-
-        if (isMounted) {
-          setApis({ userApi: liveUserApi, placesApi: livePlacesApi, pairApi: livePairApi });
-          // Ensure we check the updated state if pairId was just set
-          const finalUser = useUserStore.getState().currentUser;
-          setStatus(finalUser?.pairId ? 'telegram_ready' : 'telegram_no_pair');
-          setIsInitialized(true);
-        }
-      } catch (e) {
-        console.error("Init Error:", e);
-        useUserStore.getState().setCurrentUser(null);
-        await startMockMode(tgService.getTelegramUser());
-      }
+  const initialize = async () => {
+    setStatus('checking');
+    setIsInitialized(false);
+    
+    const startMockMode = async (tgUser?: { id: string | number; first_name?: string; photo_url?: string } | null) => {
+      const mockApis = createMockApiSuite(tgUser ? {
+        id: tgUser.id.toString(),
+        telegramId: tgUser.id.toString(),
+        firstName: tgUser.first_name || 'Пользователь',
+        photoUrl: tgUser.photo_url || undefined
+      } : undefined);
+      setApis(mockApis);
+      setStatus('browser_mock');
+      setIsInitialized(true);
     };
 
+    try {
+      const inTMA = await tgService.isAvailable();
+      if (!inTMA) {
+        await startMockMode(tgService.getTelegramUser());
+        return;
+      }
+
+      let liveUserApi, livePlacesApi, livePairApi;
+      try {
+        const { createSupabaseUserApi, createSupabasePlacesApi, createSupabasePairApi } = await import('@/shared/api/supabase/index');
+        liveUserApi = createSupabaseUserApi();
+        livePlacesApi = createSupabasePlacesApi();
+        livePairApi = createSupabasePairApi();
+      } catch (err) {
+        console.warn('Supabase не доступен:', err);
+        await startMockMode(tgService.getTelegramUser());
+        return;
+      }
+
+      const tgUser = tgService.getTelegramUser();
+      if (!tgUser) {
+        await startMockMode();
+        return;
+      }
+
+      const fetchPromise = liveUserApi.upsertUser({
+        telegramId: tgUser.id.toString(),
+        firstName: tgUser.first_name || 'Пользователь',
+        photoUrl: tgUser.photo_url || null,
+        initDataRaw: tgService.getInitData()
+      });
+
+      const timeoutPromise = new Promise<never>((_, reject) => setTimeout(() => reject(new Error('Timeout')), 35000));
+      const fetchedUser = await Promise.race([fetchPromise, timeoutPromise]);
+
+      useUserStore.getState().setCurrentUser(fetchedUser);
+
+      const startParam = tgService.getStartParam();
+      if (startParam && startParam.startsWith('invite_') && !fetchedUser.pairId) {
+        const inviterParam = startParam.replace('invite_', '');
+        try {
+          const { pairId, partner } = await livePairApi.createPairWithInvite(inviterParam, fetchedUser.id);
+          const updatedUser = { ...fetchedUser, pairId };
+          useUserStore.getState().setCurrentUser(updatedUser);
+          if (partner) {
+            usePairStore.getState().setPartnerUser(partner);
+          }
+        } catch (linkErr) {
+          console.warn('Ошибка привязки:', linkErr);
+        }
+      }
+
+      setApis({ userApi: liveUserApi, placesApi: livePlacesApi, pairApi: livePairApi });
+
+      const finalUser = useUserStore.getState().currentUser;
+      setStatus(finalUser?.pairId ? 'telegram_ready' : 'telegram_no_pair');
+      setIsInitialized(true);
+    } catch (e) {
+      console.error("Init Error:", e);
+      useUserStore.getState().setCurrentUser(null);
+      await startMockMode();
+    }
+  };
+
+  useEffect(() => {
     if (!isInitialized) {
       initialize();
     }
-    return () => { isMounted = false; };
   }, [isInitialized, setApis]);
 
-  return { status: derivedStatus, isInitialized };
+  return { status: derivedStatus, isInitialized, retryInit: initialize };
 };
